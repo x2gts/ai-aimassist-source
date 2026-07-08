@@ -15,7 +15,7 @@ if (empty($licenseKey) || empty($hwid)) {
 $db = getDB();
 
 // Check if key exists
-$stmt = $db->prepare("SELECT * FROM keys WHERE license_key = ?");
+$stmt = $db->prepare("SELECT * FROM license_keys WHERE license_key = ?");
 $stmt->execute([$licenseKey]);
 $key = $stmt->fetch();
 
@@ -38,7 +38,7 @@ if ($stmt->fetch()) {
 // If key is not activated yet, activate it
 if (!$key['is_active']) {
     $expiresAt = calculateExpiry($key['subscription_type']);
-    $stmt = $db->prepare("UPDATE keys SET hwid = ?, user_ip = ?, is_active = 1, activated_at = NOW(), expires_at = ? WHERE license_key = ?");
+    $stmt = $db->prepare("UPDATE license_keys SET hwid = ?, user_ip = ?, is_active = 1, activated_at = NOW(), expires_at = ? WHERE license_key = ?");
     $stmt->execute([$hwid, $ip, $expiresAt, $licenseKey]);
     
     logActivity('KEY_ACTIVATED', $licenseKey, $hwid, $ip, "Activated with subscription: {$key['subscription_type']}");
@@ -63,7 +63,7 @@ if ($key['expires_at'] && strtotime($key['expires_at']) < time()) {
 }
 
 // Update last check time
-$stmt = $db->prepare("UPDATE keys SET last_check = NOW() WHERE license_key = ?");
+$stmt = $db->prepare("UPDATE license_keys SET last_check = NOW() WHERE license_key = ?");
 $stmt->execute([$licenseKey]);
 
 logActivity('KEY_VALIDATED', $licenseKey, $hwid, $ip);

@@ -48,7 +48,7 @@ function generateKeys() {
     $keys = [];
     for ($i = 0; $i < $count; $i++) {
         $key = generateKey($prefix);
-        $stmt = $db->prepare("INSERT INTO keys (license_key, subscription_type, created_by) VALUES (?, ?, ?)");
+        $stmt = $db->prepare("INSERT INTO license_keys (license_key, subscription_type, created_by) VALUES (?, ?, ?)");
         $stmt->execute([$key, $subscription, $createdBy]);
         $keys[] = $key;
     }
@@ -77,11 +77,11 @@ function listKeys() {
         $params[] = "%{$search}%";
     }
     
-    $stmt = $db->prepare("SELECT COUNT(*) as total FROM keys {$where}");
+    $stmt = $db->prepare("SELECT COUNT(*) as total FROM license_keys {$where}");
     $stmt->execute($params);
     $total = $stmt->fetch()['total'];
     
-    $stmt = $db->prepare("SELECT * FROM keys {$where} ORDER BY created_at DESC LIMIT ? OFFSET ?");
+    $stmt = $db->prepare("SELECT * FROM license_keys {$where} ORDER BY created_at DESC LIMIT ? OFFSET ?");
     $params[] = $limit;
     $params[] = $offset;
     $stmt->execute($params);
@@ -104,7 +104,7 @@ function revokeKey() {
         jsonResponse(['success' => false, 'message' => 'Missing key']);
     }
     
-    $stmt = $db->prepare("DELETE FROM keys WHERE license_key = ?");
+    $stmt = $db->prepare("DELETE FROM license_keys WHERE license_key = ?");
     $stmt->execute([$key]);
     
     if ($stmt->rowCount() > 0) {
@@ -132,7 +132,7 @@ function banUser() {
     $stmt = $db->prepare("INSERT INTO bans (hwid, reason) VALUES (?, ?)");
     $stmt->execute([$hwid, $reason]);
     
-    $stmt = $db->prepare("UPDATE keys SET is_banned = 1 WHERE hwid = ?");
+    $stmt = $db->prepare("UPDATE license_keys SET is_banned = 1 WHERE hwid = ?");
     $stmt->execute([$hwid]);
     
     jsonResponse(['success' => true, 'message' => 'User banned']);
@@ -149,7 +149,7 @@ function unbanUser() {
     $stmt = $db->prepare("DELETE FROM bans WHERE hwid = ?");
     $stmt->execute([$hwid]);
     
-    $stmt = $db->prepare("UPDATE keys SET is_banned = 0 WHERE hwid = ?");
+    $stmt = $db->prepare("UPDATE license_keys SET is_banned = 0 WHERE hwid = ?");
     $stmt->execute([$hwid]);
     
     jsonResponse(['success' => true, 'message' => 'User unbanned']);
@@ -160,22 +160,22 @@ function getStats() {
     
     $stats = [];
     
-    $stmt = $db->query("SELECT COUNT(*) as total FROM keys");
+    $stmt = $db->query("SELECT COUNT(*) as total FROM license_keys");
     $stats['total_keys'] = $stmt->fetch()['total'];
     
-    $stmt = $db->query("SELECT COUNT(*) as total FROM keys WHERE is_active = 1");
+    $stmt = $db->query("SELECT COUNT(*) as total FROM license_keys WHERE is_active = 1");
     $stats['active_keys'] = $stmt->fetch()['total'];
     
-    $stmt = $db->query("SELECT COUNT(*) as total FROM keys WHERE is_banned = 1");
+    $stmt = $db->query("SELECT COUNT(*) as total FROM license_keys WHERE is_banned = 1");
     $stats['banned_keys'] = $stmt->fetch()['total'];
     
-    $stmt = $db->query("SELECT COUNT(*) as total FROM keys WHERE last_check > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+    $stmt = $db->query("SELECT COUNT(*) as total FROM license_keys WHERE last_check > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
     $stats['online_24h'] = $stmt->fetch()['total'];
     
     $stmt = $db->query("SELECT COUNT(*) as total FROM bans");
     $stats['banned_hwids'] = $stmt->fetch()['total'];
     
-    $stmt = $db->query("SELECT subscription_type, COUNT(*) as count FROM keys GROUP BY subscription_type");
+    $stmt = $db->query("SELECT subscription_type, COUNT(*) as count FROM license_keys GROUP BY subscription_type");
     $stats['by_subscription'] = $stmt->fetchAll();
     
     jsonResponse(['success' => true, 'stats' => $stats]);

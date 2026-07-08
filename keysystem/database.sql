@@ -5,7 +5,7 @@ CREATE DATABASE IF NOT EXISTS key_system;
 USE key_system;
 
 -- License keys table
-CREATE TABLE IF NOT EXISTS keys (
+CREATE TABLE IF NOT EXISTS license_keys (
     id INT AUTO_INCREMENT PRIMARY KEY,
     license_key VARCHAR(25) NOT NULL UNIQUE,
     hwid VARCHAR(255) DEFAULT NULL,
