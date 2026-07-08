@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/config.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     jsonResponse(['success' => false, 'message' => 'Method not allowed'], 405);
@@ -26,11 +26,6 @@ if (!$admin || !password_verify($password, $admin['password_hash'])) {
 $stmt = $db->prepare("UPDATE admins SET last_login = NOW() WHERE id = ?");
 $stmt->execute([$admin['id']]);
 
-// Generate session token
-$token = bin2hex(random_bytes(32));
-
-// Store token (in production, use Redis or database)
-// For simplicity, we'll use the API key as the token
 jsonResponse([
     'success' => true,
     'message' => 'Login successful',

@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once __DIR__ . '/config.php';
 
 // Admin API for key management
 verifyApiKey();
@@ -77,12 +77,10 @@ function listKeys() {
         $params[] = "%{$search}%";
     }
     
-    // Get total count
     $stmt = $db->prepare("SELECT COUNT(*) as total FROM keys {$where}");
     $stmt->execute($params);
     $total = $stmt->fetch()['total'];
     
-    // Get keys
     $stmt = $db->prepare("SELECT * FROM keys {$where} ORDER BY created_at DESC LIMIT ? OFFSET ?");
     $params[] = $limit;
     $params[] = $offset;
@@ -125,18 +123,15 @@ function banUser() {
         jsonResponse(['success' => false, 'message' => 'Missing HWID']);
     }
     
-    // Check if already banned
     $stmt = $db->prepare("SELECT id FROM bans WHERE hwid = ?");
     $stmt->execute([$hwid]);
     if ($stmt->fetch()) {
         jsonResponse(['success' => false, 'message' => 'HWID already banned']);
     }
     
-    // Add to ban list
     $stmt = $db->prepare("INSERT INTO bans (hwid, reason) VALUES (?, ?)");
     $stmt->execute([$hwid, $reason]);
     
-    // Ban all keys associated with this HWID
     $stmt = $db->prepare("UPDATE keys SET is_banned = 1 WHERE hwid = ?");
     $stmt->execute([$hwid]);
     
@@ -165,27 +160,21 @@ function getStats() {
     
     $stats = [];
     
-    // Total keys
     $stmt = $db->query("SELECT COUNT(*) as total FROM keys");
     $stats['total_keys'] = $stmt->fetch()['total'];
     
-    // Active keys
     $stmt = $db->query("SELECT COUNT(*) as total FROM keys WHERE is_active = 1");
     $stats['active_keys'] = $stmt->fetch()['total'];
     
-    // Banned keys
     $stmt = $db->query("SELECT COUNT(*) as total FROM keys WHERE is_banned = 1");
     $stats['banned_keys'] = $stmt->fetch()['total'];
     
-    // Active users (checked in last 24h)
     $stmt = $db->query("SELECT COUNT(*) as total FROM keys WHERE last_check > DATE_SUB(NOW(), INTERVAL 24 HOUR)");
     $stats['online_24h'] = $stmt->fetch()['total'];
     
-    // Banned HWIDs
     $stmt = $db->query("SELECT COUNT(*) as total FROM bans");
     $stats['banned_hwids'] = $stmt->fetch()['total'];
     
-    // Keys by subscription type
     $stmt = $db->query("SELECT subscription_type, COUNT(*) as count FROM keys GROUP BY subscription_type");
     $stats['by_subscription'] = $stmt->fetchAll();
     
