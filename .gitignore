@@ -1,0 +1,30 @@
+# Build files
+*.exe
+*.obj
+*.pdb
+*.ilk
+*.res
+Release/
+Debug/
+x64/
+x86/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.ncb
+*.sdf
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Temporary
+*.tmp
+*.log
