@@ -64,7 +64,6 @@ function generateKeys() {
     
     logActivity($db, 'KEYS_GENERATED', null, null, null, "Count: {$count}, Type: {$subscription}");
 }
-}
 
 function listKeys() {
     global $db;
