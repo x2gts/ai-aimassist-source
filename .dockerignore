@@ -1,0 +1,9 @@
+.git
+.vs
+*.exe
+*.obj
+*.pdb
+*.ilk
+*.res
+Release/
+Debug/
