@@ -59,7 +59,7 @@ void hide()
 }
 
 // Auth system configuration - Replace with your API URL
-std::string api_url = "http://your-domain.com/keysystem/api";
+std::string api_url = "https://ai-aimassist-source.onrender.com";
 AuthSystem auth(api_url);
 
 static bool login = false;
