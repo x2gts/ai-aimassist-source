@@ -1,19 +1,25 @@
 <?php
 // Database configuration
-define('DB_HOST', 'sql8.freesqldatabase.com');
-define('DB_NAME', 'sql8832571');
-define('DB_USER', 'sql8832571');
-define('DB_PASS', 'UeSu2T8u1h');
+if (!defined('DB_HOST')) {
+    define('DB_HOST', 'sql8.freesqldatabase.com');
+    define('DB_NAME', 'sql8832571');
+    define('DB_USER', 'sql8832571');
+    define('DB_PASS', 'UeSu2T8u1h');
+}
 
 // Security
-define('ADMIN_API_KEY', 'x2gts-admin-key-2024');
-define('API_SECRET', 'CHANGE_THIS_TO_ANOTHER_RANDOM_SECRET');
+if (!defined('ADMIN_API_KEY')) {
+    define('ADMIN_API_KEY', 'x2gts-admin-key-2024');
+    define('API_SECRET', 'CHANGE_THIS_TO_ANOTHER_RANDOM_SECRET');
+}
 
 // CORS headers for local development
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, X-API-Key');
-header('Content-Type: application/json');
+if (!headers_sent()) {
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type, X-API-Key');
+    header('Content-Type: application/json');
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
