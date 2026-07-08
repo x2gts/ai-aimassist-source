@@ -4,6 +4,13 @@ require_once __DIR__ . '/config.php';
 verifyApiKey();
 
 $db = getDB();
+
+// Parse JSON body into $_POST so functions can read it
+$jsonInput = json_decode(file_get_contents('php://input'), true);
+if ($jsonInput && is_array($jsonInput)) {
+    $_POST = array_merge($_POST, $jsonInput);
+}
+
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
 switch ($action) {
