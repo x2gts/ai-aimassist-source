@@ -6,7 +6,7 @@ define('DB_USER', 'sql8832571');
 define('DB_PASS', 'UeSu2T8u1h');
 
 // Security
-define('ADMIN_API_KEY', 'CHANGE_THIS_TO_A_RANDOM_SECRET_KEY');
+define('ADMIN_API_KEY', 'x2gts-admin-key-2024');
 define('API_SECRET', 'CHANGE_THIS_TO_ANOTHER_RANDOM_SECRET');
 
 // CORS headers for local development
