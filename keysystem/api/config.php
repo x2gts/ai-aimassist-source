@@ -1,9 +1,9 @@
 <?php
 // Database configuration
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'key_system');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_HOST', 'sql8.freesqldatabase.com');
+define('DB_NAME', 'sql8832571');
+define('DB_USER', 'sql8832571');
+define('DB_PASS', 'UeSu2T8u1h');
 
 // Security
 define('ADMIN_API_KEY', 'CHANGE_THIS_TO_A_RANDOM_SECRET_KEY');
