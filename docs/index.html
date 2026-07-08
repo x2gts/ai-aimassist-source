@@ -227,7 +227,7 @@
             const password = document.getElementById('loginPassword').value;
             
             try {
-                const res = await fetch(API_URL + 'login.php', {
+                const res = await fetch(API_URL + '/?action=login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
@@ -266,13 +266,13 @@
             if (data && method === 'POST') {
                 options.body = JSON.stringify(data);
             }
-            const res = await fetch(API_URL + endpoint, options);
+                        const res = await fetch(API_URL + '/?action=' + endpoint, options);
             return res.json();
         }
 
         // Load stats
         async function loadStats() {
-            const data = await apiCall('admin.php?action=stats', null, 'GET');
+            const data = await apiCall('stats', null, 'GET');
             if (data.success) {
                 document.getElementById('statTotal').textContent = data.stats.total_keys;
                 document.getElementById('statActive').textContent = data.stats.active_keys;
@@ -287,7 +287,7 @@
             const count = document.getElementById('genCount').value;
             const subscription = document.getElementById('genSubscription').value;
             
-            const data = await apiCall('admin.php?action=generate', {
+            const data = await apiCall('generate', {
                 prefix, count, subscription
             });
             
@@ -306,7 +306,7 @@
         // Load keys
         async function loadKeys(page = 1, search = '') {
             currentPage = page;
-            const data = await apiCall(`admin.php?action=list&page=${page}&search=${search}`, null, 'GET');
+            const data = await apiCall(`list&page=${page}&search=${search}`, null, 'GET');
             
             if (data.success) {
                 const tbody = document.getElementById('keysTable');
@@ -350,7 +350,7 @@
 
         async function revokeKey(key) {
             if (!confirm('Revoke this key?')) return;
-            const data = await apiCall('admin.php?action=revoke', { key });
+            const data = await apiCall('revoke', { key });
             if (data.success) {
                 loadKeys(currentPage);
                 loadStats();
@@ -372,7 +372,7 @@
                 return;
             }
             
-            const data = await apiCall('admin.php?action=ban', { hwid, reason });
+            const data = await apiCall('ban', { hwid, reason });
             if (data.success) {
                 document.getElementById('banError').className = 'success';
                 document.getElementById('banError').textContent = 'User banned';
@@ -387,7 +387,7 @@
 
         // Activity log
         async function loadLog() {
-            const data = await apiCall('admin.php?action=log', null, 'GET');
+            const data = await apiCall('log', null, 'GET');
             if (data.success) {
                 const tbody = document.getElementById('logTable');
                 tbody.innerHTML = '';
