@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/config.php';
 
-// Validate a license key
 $input = json_decode(file_get_contents('php://input'), true);
 
 $licenseKey = $input['key'] ?? '';
@@ -14,34 +13,34 @@ if (empty($licenseKey) || empty($hwid)) {
 
 $db = getDB();
 
-// Check if key exists
-$stmt = $db->prepare("SELECT * FROM license_keys WHERE license_key = ?");
-$stmt->execute([$licenseKey]);
-$key = $stmt->fetch();
+$stmt = $db->prepare("SELECT * FROM license_keys WHERE license_key = :key");
+bindValue($stmt, ':key', $licenseKey);
+$result = $stmt->execute();
+$key = $result->fetchArray(SQLITE3_ASSOC);
 
 if (!$key) {
     jsonResponse(['success' => false, 'message' => 'Invalid license key', 'code' => 'INVALID_KEY']);
 }
 
-// Check if banned
 if ($key['is_banned']) {
     jsonResponse(['success' => false, 'message' => 'This key has been banned', 'code' => 'KEY_BANNED']);
 }
 
-// Check if HWID is banned
-$stmt = $db->prepare("SELECT id FROM bans WHERE hwid = ?");
-$stmt->execute([$hwid]);
-if ($stmt->fetch()) {
+$stmt = $db->prepare("SELECT id FROM bans WHERE hwid = :hwid");
+bindValue($stmt, ':hwid', $hwid);
+$result = $stmt->execute();
+if ($result->fetchArray()) {
     jsonResponse(['success' => false, 'message' => 'This hardware has been banned', 'code' => 'HWID_BANNED']);
 }
 
-// If key is not activated yet, activate it
 if (!$key['is_active']) {
     $expiresAt = calculateExpiry($key['subscription_type']);
-    $stmt = $db->prepare("UPDATE license_keys SET hwid = ?, user_ip = ?, is_active = 1, activated_at = NOW(), expires_at = ? WHERE license_key = ?");
-    $stmt->execute([$hwid, $ip, $expiresAt, $licenseKey]);
-    
-    logActivity('KEY_ACTIVATED', $licenseKey, $hwid, $ip, "Activated with subscription: {$key['subscription_type']}");
+    $stmt = $db->prepare("UPDATE license_keys SET hwid = :hwid, user_ip = :ip, is_active = 1, activated_at = datetime('now'), expires_at = :expires WHERE license_key = :key");
+    bindValue($stmt, ':hwid', $hwid);
+    bindValue($stmt, ':ip', $ip);
+    bindValue($stmt, ':expires', $expiresAt);
+    bindValue($stmt, ':key', $licenseKey);
+    $stmt->execute();
     
     jsonResponse([
         'success' => true, 
@@ -51,22 +50,17 @@ if (!$key['is_active']) {
     ]);
 }
 
-// Key is already activated - verify HWID
 if ($key['hwid'] !== $hwid) {
-    logActivity('HWID_MISMATCH', $licenseKey, $hwid, $ip, "Expected: {$key['hwid']}");
     jsonResponse(['success' => false, 'message' => 'Key is bound to different hardware', 'code' => 'HWID_MISMATCH']);
 }
 
-// Check expiry
 if ($key['expires_at'] && strtotime($key['expires_at']) < time()) {
     jsonResponse(['success' => false, 'message' => 'Key has expired', 'code' => 'KEY_EXPIRED', 'expires' => $key['expires_at']]);
 }
 
-// Update last check time
-$stmt = $db->prepare("UPDATE license_keys SET last_check = NOW() WHERE license_key = ?");
-$stmt->execute([$licenseKey]);
-
-logActivity('KEY_VALIDATED', $licenseKey, $hwid, $ip);
+$stmt = $db->prepare("UPDATE license_keys SET last_check = datetime('now') WHERE license_key = :key");
+bindValue($stmt, ':key', $licenseKey);
+$stmt->execute();
 
 jsonResponse([
     'success' => true, 
@@ -86,9 +80,11 @@ function calculateExpiry($type) {
     }
 }
 
-function logActivity($action, $key, $hwid, $ip, $details = null) {
-    $db = getDB();
-    $stmt = $db->prepare("INSERT INTO activity_log (action, license_key, hwid, ip_address, details) VALUES (?, ?, ?, ?, ?)");
-    $stmt->execute([$action, $key, $hwid, $ip, $details]);
+function bindValue($stmt, $key, $value) {
+    if (is_int($value)) {
+        $stmt->bindValue($key, $value, SQLITE3_INTEGER);
+    } else {
+        $stmt->bindValue($key, $value, SQLITE3_TEXT);
+    }
 }
 ?>

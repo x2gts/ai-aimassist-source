@@ -1,11 +1,6 @@
 <?php
-// Database configuration
-if (!defined('DB_HOST')) {
-    define('DB_HOST', 'sql8.freesqldatabase.com');
-    define('DB_NAME', 'sql8832571');
-    define('DB_USER', 'sql8832571');
-    define('DB_PASS', 'UeSu2T8u1h');
-}
+// Database configuration - SQLite (no external DB needed)
+define('DB_PATH', __DIR__ . '/database.sqlite');
 
 // Security
 if (!defined('ADMIN_API_KEY')) {
@@ -13,7 +8,7 @@ if (!defined('ADMIN_API_KEY')) {
     define('API_SECRET', 'CHANGE_THIS_TO_ANOTHER_RANDOM_SECRET');
 }
 
-// CORS headers for local development
+// CORS headers
 if (!headers_sent()) {
     header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
@@ -27,22 +22,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 function getDB() {
-    try {
-        $pdo = new PDO(
-            "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
-            DB_USER,
-            DB_PASS,
-            [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-            ]
-        );
-        return $pdo;
-    } catch (PDOException $e) {
-        http_response_code(500);
-        echo json_encode(['success' => false, 'message' => 'Database connection failed']);
-        exit();
+    static $db = null;
+    if ($db === null) {
+        $db = new SQLite3(DB_PATH);
+        $db->busyTimeout(5000);
+        $db->exec('PRAGMA journal_mode = WAL');
+        
+        // Create tables if they don't exist
+        $db->exec("CREATE TABLE IF NOT EXISTS license_keys (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            license_key TEXT NOT NULL UNIQUE,
+            hwid TEXT DEFAULT NULL,
+            user_ip TEXT DEFAULT NULL,
+            is_active INTEGER DEFAULT 0,
+            is_banned INTEGER DEFAULT 0,
+            subscription_type TEXT DEFAULT 'trial' CHECK(subscription_type IN ('trial','1day','7day','30day','lifetime')),
+            activated_at TEXT DEFAULT NULL,
+            expires_at TEXT DEFAULT NULL,
+            last_check TEXT DEFAULT NULL,
+            created_at TEXT DEFAULT (datetime('now')),
+            created_by TEXT DEFAULT 'system'
+        )");
+        
+        $db->exec("CREATE TABLE IF NOT EXISTS admins (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE,
+            password_hash TEXT NOT NULL,
+            api_key TEXT NOT NULL,
+            created_at TEXT DEFAULT (datetime('now')),
+            last_login TEXT DEFAULT NULL
+        )");
+        
+        $db->exec("CREATE TABLE IF NOT EXISTS bans (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            hwid TEXT NOT NULL,
+            reason TEXT DEFAULT NULL,
+            banned_at TEXT DEFAULT (datetime('now')),
+            banned_by TEXT DEFAULT 'system'
+        )");
+        
+        $db->exec("CREATE TABLE IF NOT EXISTS activity_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            action TEXT NOT NULL,
+            license_key TEXT DEFAULT NULL,
+            hwid TEXT DEFAULT NULL,
+            ip_address TEXT DEFAULT NULL,
+            details TEXT DEFAULT NULL,
+            created_at TEXT DEFAULT (datetime('now'))
+        )");
+        
+        // Insert default admin if not exists
+        $result = $db->querySingle("SELECT COUNT(*) FROM admins");
+        if ($result == 0) {
+            $hash = password_hash('password', PASSWORD_DEFAULT);
+            $db->exec("INSERT INTO admins (username, password_hash, api_key) VALUES ('admin', '$hash', 'x2gts-admin-key-2024')");
+        }
     }
+    return $db;
 }
 
 function jsonResponse($data, $code = 200) {
@@ -68,16 +104,5 @@ function generateKey($prefix = 'AIM') {
         if ($i < 3) $key .= '-';
     }
     return $key;
-}
-
-function getHWID() {
-    if (php_uname('s') === 'Windows NT') {
-        $output = [];
-        exec('wmic csproduct get uuid', $output);
-        if (isset($output[1])) {
-            return trim($output[1]);
-        }
-    }
-    return php_uname('n') . '-' . sys_get_temp_dir();
 }
 ?>

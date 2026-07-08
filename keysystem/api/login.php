@@ -14,17 +14,19 @@ if (empty($username) || empty($password)) {
 }
 
 $db = getDB();
-$stmt = $db->prepare("SELECT * FROM admins WHERE username = ?");
-$stmt->execute([$username]);
-$admin = $stmt->fetch();
+
+$stmt = $db->prepare("SELECT * FROM admins WHERE username = :username");
+$stmt->bindValue(':username', $username, SQLITE3_TEXT);
+$result = $stmt->execute();
+$admin = $result->fetchArray(SQLITE3_ASSOC);
 
 if (!$admin || !password_verify($password, $admin['password_hash'])) {
     jsonResponse(['success' => false, 'message' => 'Invalid credentials'], 401);
 }
 
-// Update last login
-$stmt = $db->prepare("UPDATE admins SET last_login = NOW() WHERE id = ?");
-$stmt->execute([$admin['id']]);
+$stmt = $db->prepare("UPDATE admins SET last_login = datetime('now') WHERE id = :id");
+$stmt->bindValue(':id', $admin['id'], SQLITE3_INTEGER);
+$stmt->execute();
 
 jsonResponse([
     'success' => true,
