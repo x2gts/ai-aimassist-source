@@ -26,13 +26,6 @@ if ($key['is_banned']) {
     jsonResponse(['success' => false, 'message' => 'This key has been banned', 'code' => 'KEY_BANNED']);
 }
 
-$stmt = $db->prepare("SELECT id FROM bans WHERE hwid = :hwid");
-bindValue($stmt, ':hwid', $hwid);
-$result = $stmt->execute();
-if ($result->fetchArray()) {
-    jsonResponse(['success' => false, 'message' => 'This hardware has been banned', 'code' => 'HWID_BANNED']);
-}
-
 if (!$key['is_active']) {
     $expiresAt = calculateExpiry($key['subscription_type']);
     $stmt = $db->prepare("UPDATE license_keys SET hwid = :hwid, user_ip = :ip, is_active = 1, activated_at = datetime('now'), expires_at = :expires WHERE license_key = :key");
@@ -62,6 +55,8 @@ $stmt = $db->prepare("UPDATE license_keys SET last_check = datetime('now') WHERE
 bindValue($stmt, ':key', $licenseKey);
 $stmt->execute();
 
+logActivity($db, 'KEY_VALIDATED', $licenseKey, $hwid, $ip, null);
+
 jsonResponse([
     'success' => true, 
     'message' => 'Key is valid',
@@ -86,5 +81,15 @@ function bindValue($stmt, $key, $value) {
     } else {
         $stmt->bindValue($key, $value, SQLITE3_TEXT);
     }
+}
+
+function logActivity($db, $action, $licenseKey = null, $hwid = null, $ip = null, $details = null) {
+    $stmt = $db->prepare("INSERT INTO activity_log (action, license_key, hwid, ip_address, details) VALUES (:action, :key, :hwid, :ip, :details)");
+    $stmt->bindValue(':action', $action, SQLITE3_TEXT);
+    $stmt->bindValue(':key', $licenseKey, SQLITE3_TEXT);
+    $stmt->bindValue(':hwid', $hwid, SQLITE3_TEXT);
+    $stmt->bindValue(':ip', $ip, SQLITE3_TEXT);
+    $stmt->bindValue(':details', $details, SQLITE3_TEXT);
+    $stmt->execute();
 }
 ?>

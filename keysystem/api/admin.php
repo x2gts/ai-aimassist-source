@@ -61,6 +61,9 @@ function generateKeys() {
         'keys' => $keys,
         'subscription' => $subscription
     ]);
+    
+    logActivity($db, 'KEYS_GENERATED', null, null, null, "Count: {$count}, Type: {$subscription}");
+}
 }
 
 function listKeys() {
@@ -117,46 +120,52 @@ function revokeKey() {
     $stmt->execute();
     
     jsonResponse(['success' => true, 'message' => 'Key revoked']);
+    
+    logActivity($db, 'KEY_REVOKED', $key, null, null, null);
 }
 
 function banUser() {
     global $db;
-    $hwid = $_POST['hwid'] ?? '';
+    $licenseKey = $_POST['key'] ?? '';
     $reason = $_POST['reason'] ?? 'No reason provided';
     
-    if (empty($hwid)) {
-        jsonResponse(['success' => false, 'message' => 'Missing HWID']);
+    if (empty($licenseKey)) {
+        jsonResponse(['success' => false, 'message' => 'Missing license key']);
     }
     
-    $stmt = $db->prepare("INSERT INTO bans (hwid, reason) VALUES (:hwid, :reason)");
-    $stmt->bindValue(':hwid', $hwid, SQLITE3_TEXT);
+    $stmt = $db->prepare("INSERT INTO bans (license_key, reason) VALUES (:key, :reason)");
+    $stmt->bindValue(':key', $licenseKey, SQLITE3_TEXT);
     $stmt->bindValue(':reason', $reason, SQLITE3_TEXT);
     $stmt->execute();
     
-    $stmt = $db->prepare("UPDATE license_keys SET is_banned = 1 WHERE hwid = :hwid");
-    $stmt->bindValue(':hwid', $hwid, SQLITE3_TEXT);
+    $stmt = $db->prepare("UPDATE license_keys SET is_banned = 1 WHERE license_key = :key");
+    $stmt->bindValue(':key', $licenseKey, SQLITE3_TEXT);
     $stmt->execute();
     
-    jsonResponse(['success' => true, 'message' => 'User banned']);
+    logActivity($db, 'KEY_BANNED', $licenseKey, null, null, "Reason: {$reason}");
+    
+    jsonResponse(['success' => true, 'message' => 'Key banned']);
 }
 
 function unbanUser() {
     global $db;
-    $hwid = $_POST['hwid'] ?? '';
+    $licenseKey = $_POST['key'] ?? '';
     
-    if (empty($hwid)) {
-        jsonResponse(['success' => false, 'message' => 'Missing HWID']);
+    if (empty($licenseKey)) {
+        jsonResponse(['success' => false, 'message' => 'Missing license key']);
     }
     
-    $stmt = $db->prepare("DELETE FROM bans WHERE hwid = :hwid");
-    $stmt->bindValue(':hwid', $hwid, SQLITE3_TEXT);
+    $stmt = $db->prepare("DELETE FROM bans WHERE license_key = :key");
+    $stmt->bindValue(':key', $licenseKey, SQLITE3_TEXT);
     $stmt->execute();
     
-    $stmt = $db->prepare("UPDATE license_keys SET is_banned = 0 WHERE hwid = :hwid");
-    $stmt->bindValue(':hwid', $hwid, SQLITE3_TEXT);
+    $stmt = $db->prepare("UPDATE license_keys SET is_banned = 0 WHERE license_key = :key");
+    $stmt->bindValue(':key', $licenseKey, SQLITE3_TEXT);
     $stmt->execute();
     
-    jsonResponse(['success' => true, 'message' => 'User unbanned']);
+    logActivity($db, 'KEY_UNBANNED', $licenseKey, null, null, null);
+    
+    jsonResponse(['success' => true, 'message' => 'Key unbanned']);
 }
 
 function getStats() {
@@ -168,9 +177,18 @@ function getStats() {
     $stats['active_keys'] = $db->querySingle("SELECT COUNT(*) FROM license_keys WHERE is_active = 1");
     $stats['banned_keys'] = $db->querySingle("SELECT COUNT(*) FROM license_keys WHERE is_banned = 1");
     $stats['online_24h'] = $db->querySingle("SELECT COUNT(*) FROM license_keys WHERE last_check > datetime('now', '-1 day')");
-    $stats['banned_hwids'] = $db->querySingle("SELECT COUNT(*) FROM bans");
     
     jsonResponse(['success' => true, 'stats' => $stats]);
+}
+
+function logActivity($db, $action, $licenseKey = null, $hwid = null, $ip = null, $details = null) {
+    $stmt = $db->prepare("INSERT INTO activity_log (action, license_key, hwid, ip_address, details) VALUES (:action, :key, :hwid, :ip, :details)");
+    $stmt->bindValue(':action', $action, SQLITE3_TEXT);
+    $stmt->bindValue(':key', $licenseKey, SQLITE3_TEXT);
+    $stmt->bindValue(':hwid', $hwid, SQLITE3_TEXT);
+    $stmt->bindValue(':ip', $ip, SQLITE3_TEXT);
+    $stmt->bindValue(':details', $details, SQLITE3_TEXT);
+    $stmt->execute();
 }
 
 function getActivityLog() {

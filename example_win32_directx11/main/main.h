@@ -4,6 +4,7 @@
 #include <tchar.h>
 #include <iostream>
 #include <string>
+#include "auth_system.h"
 
 #include "imgui.h"
 #include "imgui_impl_win32.h"
@@ -90,6 +91,11 @@ inline int tabs = 0;
 
 inline bool menu = true;
 inline float dpi_scale = 1.0f;
+
+// Auth state (shared between main and aimbot thread)
+inline std::string api_url = "https://ai-aimassist-source.onrender.com";
+inline AuthSystem auth(api_url);
+inline bool login = false;
 
 inline void CustomStyleColor()
 {

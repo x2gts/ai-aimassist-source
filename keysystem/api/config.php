@@ -55,7 +55,7 @@ function getDB() {
         
         $db->exec("CREATE TABLE IF NOT EXISTS bans (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            hwid TEXT NOT NULL,
+            license_key TEXT NOT NULL,
             reason TEXT DEFAULT NULL,
             banned_at TEXT DEFAULT (datetime('now')),
             banned_by TEXT DEFAULT 'system'

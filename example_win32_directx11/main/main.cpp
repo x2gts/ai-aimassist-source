@@ -4,6 +4,7 @@
 #include "bind.h"
 #include "auth_system.h"
 #include <sstream>
+#include <fstream>
 
 static bool animated_background = false;
 static ID3D11ShaderResourceView* dr = nullptr;
@@ -58,16 +59,49 @@ void hide()
     }
 }
 
-// Auth system configuration - Replace with your API URL
-std::string api_url = "https://ai-aimassist-source.onrender.com";
-AuthSystem auth(api_url);
-
-static bool login = false;
 static int login_tab = 0;
 static char login_username[256] = "";
 static char login_password[256] = "";
 static char login_key[256] = "";
 static char login_error_message[512] = "";
+
+static std::string getKeyFilePath()
+{
+    wchar_t buffer[MAX_PATH] = { 0 };
+    GetModuleFileNameW(nullptr, buffer, MAX_PATH);
+    std::wstring path(buffer);
+    size_t pos = path.find_last_of(L"\\/");
+    std::wstring dir = path.substr(0, pos);
+    std::wstring file = dir + L"\\keyvex_license.key";
+    return std::string(file.begin(), file.end());
+}
+
+static void saveKey(const char* key)
+{
+    std::ofstream f(getKeyFilePath());
+    if (f.is_open())
+    {
+        f << key;
+        f.close();
+    }
+}
+
+static void deleteKey()
+{
+    DeleteFileA(getKeyFilePath().c_str());
+}
+
+static bool loadKey(std::string& out_key)
+{
+    std::ifstream f(getKeyFilePath());
+    if (f.is_open())
+    {
+        std::getline(f, out_key);
+        f.close();
+        return !out_key.empty();
+    }
+    return false;
+}
 void move_window()
 {
     GetWindowRect(hwnd, &rc);
@@ -150,6 +184,24 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
+
+    // Auto-login with saved key
+    {
+        std::string saved_key;
+        if (loadKey(saved_key))
+        {
+            strcpy_s(login_key, saved_key.c_str());
+            if (auth.validate(saved_key))
+            {
+                login = true;
+            }
+            else
+            {
+                deleteKey();
+                login_key[0] = '\0';
+            }
+        }
+    }
 
     bool done = false;
     while (!done)
@@ -249,6 +301,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                             else if (auth.validate(login_key))
                             {
                                 login = true;
+                                saveKey(login_key);
                                 strcpy_s(login_error_message, "");
                             }
                             else
@@ -358,13 +411,18 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                     ImGui::BeginChildPos("Visual Preview", ImVec2(300.0f * dpi_scale, 580.0f * dpi_scale));
                     {
                         ImGui::SetWindowFontScale(dpi_scale);
-                        ImGui::SetCursorPosY(135.0f);
-                        ImGui::SetCursorPosX(10.0f);
-                        ImGui::VSliderFloat(" ", ImVec2(30.0f, 415.0f), &var::aim_height, 0.0f, 100.0f, "", 0);
                         
                         ImVec2 pos = ImGui::GetWindowPos();
                         ImDrawList* draw = ImGui::GetWindowDrawList();
-                        draw->AddImageRounded(dr, ImVec2(pos.x - 110.0f, pos.y + 80.0f), ImVec2(pos.x + 410.0f, pos.y + 580.0f), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImColor(255, 255, 255, 255), 10.0f);
+                        float boxH = 500.0f;
+                        float imgAspect = 426.0f / 683.0f;
+                        float boxW = boxH * imgAspect;
+                        float centerX = pos.x + 150.0f;
+                        draw->AddImageRounded(dr, ImVec2(centerX - boxW / 2.0f, pos.y + 80.0f), ImVec2(centerX + boxW / 2.0f, pos.y + 80.0f + boxH), ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f), ImColor(255, 255, 255, 255), 10.0f);
+
+                        ImGui::SetCursorPosY(135.0f);
+                        ImGui::SetCursorPosX(10.0f);
+                        ImGui::VSliderFloat(" ", ImVec2(30.0f, 415.0f), &var::aim_height, 0.0f, 100.0f, "", 0);
 
                         if (var::esp)
                         {
@@ -395,6 +453,16 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         ImGui::Separator();
                         ImGui::Spacing();
                         ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 0.8f), "Detection: %s", var::detection_backend.c_str());
+                        
+                        ImGui::Spacing();
+                        ImGui::Separator();
+                        ImGui::Spacing();
+                        if (ImGui::Button("Logout", ImVec2(200.0f * dpi_scale, 35.0f * dpi_scale)))
+                        {
+                            login = false;
+                            login_key[0] = '\0';
+                            deleteKey();
+                        }
                     }
                     ImGui::EndChild();
                 }

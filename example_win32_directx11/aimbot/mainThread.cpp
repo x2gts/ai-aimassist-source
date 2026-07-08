@@ -4,6 +4,8 @@
 #include <filesystem>
 #include "defines.h"
 #include "main.h"
+#include <chrono>
+#include "auth_system.h"
 
 static std::wstring GetCurrentDirectory()
 {
@@ -28,18 +30,36 @@ static DWORD WINAPI RunningThread(LPVOID)
 
     var::detection_backend = detect.getBackendName();
 
+    // Re-validate key periodically to detect bans
+    auto lastCheck = std::chrono::steady_clock::now();
+
     Sleep(1000);
 
     while (true)
     {
         thread1::POC();
 
+        // Periodic ban check (every 30 seconds)
+        auto now = std::chrono::steady_clock::now();
+        if (std::chrono::duration_cast<std::chrono::seconds>(now - lastCheck).count() >= 30)
+        {
+            lastCheck = now;
+            if (login && !auth.validate(auth.getLicenseKey()))
+            {
+                if (auth.getLastErrorCode() == "KEY_BANNED")
+                {
+                    MessageBoxA(NULL, "Your key has been banned.", "Access Revoked", MB_ICONERROR);
+                    ExitProcess(0);
+                }
+            }
+        }
+
         if ((GetAsyncKeyState(var::key0) & 0x8000) || (var::LTrigger && var::checkbox))
         {
             image = screen.get();
             detect.start(image);
             const int fpslimit = 251 - var::scannFPS;
-            cv::waitKey(fpslimit);
+            Sleep(fpslimit);
         }
         else
         {

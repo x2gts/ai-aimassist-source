@@ -169,8 +169,8 @@
                 <h2>Ban List</h2>
                 <div class="form-row">
                     <div class="form-group" style="flex:2;">
-                        <label>HWID to Ban</label>
-                        <input type="text" id="banHwid" placeholder="Enter HWID">
+                        <label>License Key to Ban</label>
+                        <input type="text" id="banKey" placeholder="Enter license key">
                     </div>
                     <div class="form-group" style="flex:2;">
                         <label>Reason</label>
@@ -185,7 +185,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>HWID</th>
+                            <th>Key</th>
                             <th>Reason</th>
                             <th>Banned At</th>
                             <th>Actions</th>
@@ -193,6 +193,7 @@
                     </thead>
                     <tbody id="bansTable"></tbody>
                 </table>
+                <button class="btn btn-warning" onclick="loadBans()" style="margin-top:15px;">Refresh</button>
             </div>
 
             <!-- Activity Log Tab -->
@@ -325,7 +326,7 @@
                             <td>${key.expires_at || 'Never'}</td>
                             <td>
                                 <button class="btn btn-danger" onclick="revokeKey('${key.license_key}')">Revoke</button>
-                                ${key.hwid ? `<button class="btn btn-warning" onclick="quickBan('${key.hwid}')">Ban</button>` : ''}
+                                <button class="btn btn-warning" onclick="quickBan('${key.license_key}')">Ban</button>
                             </td>
                         </tr>
                     `;
@@ -357,31 +358,61 @@
             }
         }
 
-        function quickBan(hwid) {
-            document.getElementById('banHwid').value = hwid;
+        function quickBan(key) {
+            document.getElementById('banKey').value = key;
             showTab('bans');
         }
 
         // Ban user
         async function banUser() {
-            const hwid = document.getElementById('banHwid').value;
+            const key = document.getElementById('banKey').value;
             const reason = document.getElementById('banReason').value;
             
-            if (!hwid) {
-                document.getElementById('banError').textContent = 'Enter a HWID';
+            if (!key) {
+                document.getElementById('banError').textContent = 'Enter a license key';
                 return;
             }
             
-            const data = await apiCall('ban', { hwid, reason });
+            const data = await apiCall('ban', { key, reason });
             if (data.success) {
                 document.getElementById('banError').className = 'success';
-                document.getElementById('banError').textContent = 'User banned';
-                document.getElementById('banHwid').value = '';
+                document.getElementById('banError').textContent = 'Key banned';
+                document.getElementById('banKey').value = '';
                 document.getElementById('banReason').value = '';
                 loadStats();
+                loadBans();
             } else {
                 document.getElementById('banError').className = 'error';
                 document.getElementById('banError').textContent = data.message;
+            }
+        }
+
+        async function loadBans() {
+            const data = await apiCall('list', null, 'GET');
+            if (data.success) {
+                const tbody = document.getElementById('bansTable');
+                tbody.innerHTML = '';
+                data.keys.filter(k => k.is_banned).forEach(key => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><code>${key.license_key}</code></td>
+                            <td>Banned</td>
+                            <td>${key.activated_at || '-'}</td>
+                            <td>
+                                <button class="btn btn-success" onclick="unbanKey('${key.license_key}')">Unban</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+
+        async function unbanKey(key) {
+            if (!confirm('Unban this key?')) return;
+            const data = await apiCall('unban', { key });
+            if (data.success) {
+                loadBans();
+                loadStats();
             }
         }
 
@@ -415,6 +446,7 @@
             
             if (tab === 'manage') loadKeys();
             if (tab === 'log') loadLog();
+            if (tab === 'bans') loadBans();
         }
 
         // Enter key login

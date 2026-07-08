@@ -16,29 +16,8 @@ private:
     std::string m_licenseKey;
     std::string m_subscription;
     std::string m_expiresAt;
+    std::string m_lastErrorCode;
     bool m_isValid;
-
-    std::string getHWID() {
-        HW_PROFILE_INFO hwInfo;
-        if (GetCurrentHwProfile(&hwInfo)) {
-            return std::string(hwInfo.szHwProfileGuid);
-        }
-        
-        // Fallback: use machine GUID from registry
-        HKEY hKey;
-        char buffer[256];
-        DWORD bufferSize = sizeof(buffer);
-        
-        if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Cryptography", 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
-            if (RegQueryValueExA(hKey, "MachineGuid", nullptr, nullptr, (LPBYTE)buffer, &bufferSize) == ERROR_SUCCESS) {
-                RegCloseKey(hKey);
-                return std::string(buffer);
-            }
-            RegCloseKey(hKey);
-        }
-        
-        return "UNKNOWN_HWID";
-    }
 
     std::string httpRequest(const std::string& url, const std::string& method, const std::string& body = "") {
         // Parse URL
@@ -111,6 +90,27 @@ private:
     }
 
 public:
+    std::string getHWID() {
+        HW_PROFILE_INFO hwInfo;
+        if (GetCurrentHwProfile(&hwInfo)) {
+            return std::string(hwInfo.szHwProfileGuid);
+        }
+        
+        HKEY hKey;
+        char buffer[256];
+        DWORD bufferSize = sizeof(buffer);
+        
+        if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\Cryptography", 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+            if (RegQueryValueExA(hKey, "MachineGuid", nullptr, nullptr, (LPBYTE)buffer, &bufferSize) == ERROR_SUCCESS) {
+                RegCloseKey(hKey);
+                return std::string(buffer);
+            }
+            RegCloseKey(hKey);
+        }
+        
+        return "UNKNOWN_HWID";
+    }
+
     AuthSystem(const std::string& apiUrl) 
         : m_apiUrl(apiUrl), m_isValid(false) {
         m_hwid = getHWID();
@@ -118,6 +118,7 @@ public:
 
     bool validate(const std::string& licenseKey) {
         m_licenseKey = licenseKey;
+        m_lastErrorCode = "";
         
         json request;
         request["key"] = licenseKey;
@@ -136,6 +137,8 @@ public:
             if (m_isValid) {
                 m_subscription = result.value("subscription", "unknown");
                 m_expiresAt = result.value("expires", "never");
+            } else {
+                m_lastErrorCode = result.value("code", "");
             }
             
             return m_isValid;
@@ -145,7 +148,7 @@ public:
     }
 
     bool isValid() const { return m_isValid; }
-    std::string getHWID() const { return m_hwid; }
+    std::string getLastErrorCode() const { return m_lastErrorCode; }
     std::string getLicenseKey() const { return m_licenseKey; }
     std::string getSubscription() const { return m_subscription; }
     std::string getExpiresAt() const { return m_expiresAt; }

@@ -113,7 +113,6 @@ void detector::start(cv::Mat& image)
 
     image.convertTo(detected_frame, CV_8U);
     frame = detected_frame;
-  cv::imshow("sd�ijpououiopsdffsd", detected_frame);
 
     // number of processed frames per sec.
     const clock_t delta_ticks = clock() - current_ticks;
