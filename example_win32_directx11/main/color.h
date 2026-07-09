@@ -62,3 +62,9 @@ namespace colors {
     inline ImVec4 keybind_background = ImColor(17, 17, 17, 255);
     inline ImVec4 keybind_border = ImColor(28, 28, 28, 255);
 }
+
+namespace theme {
+    inline float accent[3] = { 0.855f, 0.376f, 0.090f };
+    inline float bg[3] = { 0.063f, 0.063f, 0.063f };
+    inline float highlight[3] = { 0.294f, 0.196f, 0.929f };
+}

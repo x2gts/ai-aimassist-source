@@ -3,6 +3,7 @@
 #include "main.h"
 #include <Windows.h>
 #include <cmath>
+#include <chrono>
 #include "mouse_interface.h"
 
 static mouse_interface mouse;
@@ -20,30 +21,35 @@ void aimbot::aim_to(int x, int y, int box_w, int box_h)
 
     static double x_smooth = 0.0;
     static double y_smooth = 0.0;
+    static auto last_time = std::chrono::steady_clock::now();
+
+    auto now = std::chrono::steady_clock::now();
+    float dt = std::chrono::duration<float>(now - last_time).count();
+    last_time = now;
+    if (dt <= 0.0f || dt > 0.1f) dt = 0.016f;
 
     const float dist = sqrtf((float)(x_offset * x_offset + y_offset * y_offset));
 
-    if (dist < 3.0f)
+    if (dist < 2.0f)
     {
         x_smooth = x_offset;
         y_smooth = y_offset;
     }
+    else if (dist > 40.0f)
+    {
+        float snap_speed = 0.70f * dt * 60.0f;
+        if (snap_speed > 0.85f) snap_speed = 0.85f;
+        x_smooth = x_smooth + (x_offset - x_smooth) * snap_speed;
+        y_smooth = y_smooth + (y_offset - y_smooth) * snap_speed;
+    }
     else
     {
-        const float base = var::smooth / 100.0f;
-        float adapt;
-        if (dist > 100.0f)
-            adapt = base * 3.0f;
-        else if (dist > 30.0f)
-            adapt = base * 1.8f;
-        else
-            adapt = base;
-
-        if (adapt < 0.05f) adapt = 0.05f;
-        if (adapt > 0.95f) adapt = 0.95f;
-
-        x_smooth = x_smooth * (1.0 - adapt) + x_offset * adapt;
-        y_smooth = y_smooth * (1.0 - adapt) + y_offset * adapt;
+        float base = var::smooth / 100.0f;
+        float factor = base * 0.6f * dt * 60.0f;
+        if (factor < 0.05f) factor = 0.05f;
+        if (factor > 0.90f) factor = 0.90f;
+        x_smooth = x_smooth * (1.0 - factor) + x_offset * factor;
+        y_smooth = y_smooth * (1.0 - factor) + y_offset * factor;
     }
 
     const int move_x = static_cast<int>(x_smooth * var::aim_speed);

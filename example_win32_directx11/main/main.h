@@ -110,18 +110,40 @@ inline bool login = false;
 inline void CustomStyleColor()
 {
     ImGuiStyle& s = ImGui::GetStyle();
+    ImVec4 accent(theme::accent[0], theme::accent[1], theme::accent[2], 1.0f);
+    ImVec4 bg(theme::bg[0], theme::bg[1], theme::bg[2], 1.0f);
+    ImVec4 hl(theme::highlight[0], theme::highlight[1], theme::highlight[2], 1.0f);
+    ImVec4 bgDim(theme::bg[0] * 0.8f, theme::bg[1] * 0.8f, theme::bg[2] * 0.8f, 1.0f);
+    ImVec4 bgLight(theme::bg[0] * 1.2f, theme::bg[1] * 1.2f, theme::bg[2] * 1.2f, 1.0f);
 
-    s.Colors[ImGuiCol_WindowBg] = ImColor(60, 65, 80, 60);
-    s.Colors[ImGuiCol_ChildBg] = ImColor(20, 20, 20, 255);
-    s.Colors[ImGuiCol_PopupBg] = ImColor(26, 26, 26, 255);
-    s.Colors[ImGuiCol_Text] = ImColor(120, 120, 120, 255);
-    s.Colors[ImGuiCol_TextDisabled] = ImColor(100, 100, 100, 255);
-    s.Colors[ImGuiCol_Border] = ImColor(28, 28, 28, 255);
-    s.Colors[ImGuiCol_TextSelectedBg] = ImColor(25, 22, 33, 100);
+    s.Colors[ImGuiCol_WindowBg] = ImVec4(bg.x, bg.y, bg.z, 0.38f);
+    s.Colors[ImGuiCol_ChildBg] = bgDim;
+    s.Colors[ImGuiCol_PopupBg] = bgDim;
+    s.Colors[ImGuiCol_Text] = ImVec4(0.47f, 0.47f, 0.47f, 1.0f);
+    s.Colors[ImGuiCol_TextDisabled] = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
+    s.Colors[ImGuiCol_Border] = ImVec4(bg.x, bg.y, bg.z, 1.0f);
+    s.Colors[ImGuiCol_TextSelectedBg] = ImVec4(hl.x, hl.y, hl.z, 0.4f);
 
-    s.Colors[ImGuiCol_ScrollbarGrab] = ImColor(24, 24, 24, 255);
-    s.Colors[ImGuiCol_ScrollbarGrabHovered] = ImColor(24, 24, 24, 255);
-    s.Colors[ImGuiCol_ScrollbarGrabActive] = ImColor(24, 24, 24, 255);
+    s.Colors[ImGuiCol_ScrollbarGrab] = bgDim;
+    s.Colors[ImGuiCol_ScrollbarGrabHovered] = bgDim;
+    s.Colors[ImGuiCol_ScrollbarGrabActive] = bgDim;
+
+    s.Colors[ImGuiCol_SliderGrab] = accent;
+    s.Colors[ImGuiCol_SliderGrabActive] = accent;
+
+    s.Colors[ImGuiCol_Button] = bgDim;
+    s.Colors[ImGuiCol_ButtonHovered] = bgLight;
+    s.Colors[ImGuiCol_ButtonActive] = bgLight;
+
+    s.Colors[ImGuiCol_Header] = hl;
+    s.Colors[ImGuiCol_HeaderHovered] = hl;
+    s.Colors[ImGuiCol_HeaderActive] = accent;
+
+    s.Colors[ImGuiCol_FrameBg] = bgDim;
+    s.Colors[ImGuiCol_FrameBgHovered] = bgLight;
+    s.Colors[ImGuiCol_FrameBgActive] = bgLight;
+
+    s.Colors[ImGuiCol_CheckMark] = accent;
 
     s.WindowBorderSize = 0;
     s.WindowPadding = ImVec2(0, 0);
