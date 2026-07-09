@@ -73,6 +73,10 @@
             <h2>Admin Panel</h2>
             <input type="text" id="loginUsername" placeholder="Username">
             <input type="password" id="loginPassword" placeholder="Password">
+            <label style="display:flex;align-items:center;gap:8px;margin-bottom:15px;color:#888;font-size:13px;cursor:pointer;">
+                <input type="checkbox" id="keepSignedIn" style="width:auto;">
+                Keep me signed in
+            </label>
             <button onclick="login()">Login</button>
             <div id="loginError" class="error"></div>
         </div>
@@ -219,13 +223,22 @@
 
     <script>
         const API_URL = 'https://ai-aimassist-source.onrender.com';
-        let apiKey = '';
+        let apiKey = localStorage.getItem('keyvex_admin_key') || '';
         let currentPage = 1;
+
+        // Auto-login if key is saved
+        if (apiKey) {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            loadStats();
+            loadKeys();
+        }
 
         // Login
         async function login() {
             const username = document.getElementById('loginUsername').value;
             const password = document.getElementById('loginPassword').value;
+            const keepSignedIn = document.getElementById('keepSignedIn').checked;
             
             try {
                 const res = await fetch(API_URL + '/?action=login', {
@@ -237,6 +250,9 @@
                 
                 if (data.success) {
                     apiKey = data.api_key;
+                    if (keepSignedIn) {
+                        localStorage.setItem('keyvex_admin_key', apiKey);
+                    }
                     document.getElementById('loginContainer').style.display = 'none';
                     document.getElementById('dashboard').style.display = 'block';
                     loadStats();
@@ -251,6 +267,7 @@
 
         function logout() {
             apiKey = '';
+            localStorage.removeItem('keyvex_admin_key');
             document.getElementById('loginContainer').style.display = 'flex';
             document.getElementById('dashboard').style.display = 'none';
         }
