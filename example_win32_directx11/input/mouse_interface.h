@@ -81,4 +81,14 @@ public:
 		temp.move_direction_y = y;
 		return InjectMouseInputSpoofFunction(&temp, 1);
 	}
+
+	bool fire() {
+		left_down();
+		return true;
+	}
+
+	bool release() {
+		left_up();
+		return true;
+	}
 };

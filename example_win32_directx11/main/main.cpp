@@ -399,6 +399,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                     {
                         ImGui::SetWindowFontScale(dpi_scale);
                         ImGui::Checkbox("Aimbot", &var::checkbox);
+                        ImGui::Checkbox("Triggerbot", &var::triggerbot);
                         ImGui::Keybind("Keybind", &var::key0, true);
                         ImGui::SliderFloat("Smoothness", &var::smooth, 1.0f, 100.0f, "%.1f", 0);
                         ImGui::SliderFloat("Aim speed", &var::aim_speed, 0.1f, 5.0f, "%.1f", 0);

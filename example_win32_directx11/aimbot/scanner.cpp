@@ -1,5 +1,9 @@
 #include "scanner.h"
 #include "main.h"
+#include "mouse_interface.h"
+#include <cmath>
+
+static mouse_interface trigger_mouse;
 
 void detector::draw_box(float conf, int left, int top, int right, int bottom, cv::Mat& frame)
 {
@@ -37,6 +41,7 @@ void detector::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs)
     std::vector<int> classes_ids;
     std::vector<float> confidences;
     std::vector<cv::Rect> boxes;
+    static bool trigger_holding = false;
 
     for (size_t i = 0; i < outs.size(); ++i)
     {
@@ -77,6 +82,16 @@ void detector::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs)
         const int idx = indices[i];
         const cv::Rect box = boxes[idx];
         draw_box(confidences[idx], box.x, box.y, box.x + box.width, box.y + box.height, frame);
+
+        if (var::fovCircle)
+        {
+            float det_cx = box.x + box.width / 2.0f;
+            float det_cy = box.y + box.height / 2.0f;
+            float half = m_activation_range / 2.0f;
+            float dist = sqrtf((det_cx - half) * (det_cx - half) + (det_cy - half) * (det_cy - half));
+            if (dist > var::fovRadius) continue;
+        }
+
         var::boxX = box.x;
         var::boxY = box.y;
         var::Height = box.height;
@@ -84,6 +99,20 @@ void detector::postprocess(cv::Mat& frame, const std::vector<cv::Mat>& outs)
         if (!IsCursorVisible())
         {
             aimbot::aim_to(var::boxX, var::boxY, var::Width, var::Height + 10);
+            if (var::triggerbot && !trigger_holding)
+            {
+                trigger_mouse.fire();
+                trigger_holding = true;
+            }
+        }
+    }
+
+    if (!var::triggerbot || indices.empty() || IsCursorVisible())
+    {
+        if (trigger_holding)
+        {
+            trigger_mouse.release();
+            trigger_holding = false;
         }
     }
 }

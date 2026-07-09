@@ -159,12 +159,16 @@
 
                 if (data.success) {
                     msgEl.className = 'success';
-                    msgEl.textContent = 'Account created! You can now sign in.';
+                    if (data.license_key) {
+                        msgEl.textContent = 'Account created! Your key: ' + data.license_key;
+                    } else {
+                        msgEl.textContent = 'Account created! You can now sign in.';
+                    }
                     document.getElementById('regUsername').value = '';
                     document.getElementById('regEmail').value = '';
                     document.getElementById('regPassword').value = '';
                     document.getElementById('regConfirm').value = '';
-                    setTimeout(() => showLogin(), 1500);
+                    setTimeout(() => showLogin(), 3000);
                 } else {
                     msgEl.className = 'error';
                     msgEl.textContent = data.message || 'Registration failed';

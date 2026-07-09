@@ -34,6 +34,7 @@ function getDB() {
             license_key TEXT NOT NULL UNIQUE,
             hwid TEXT DEFAULT NULL,
             user_ip TEXT DEFAULT NULL,
+            user_id INTEGER DEFAULT NULL,
             is_active INTEGER DEFAULT 0,
             is_banned INTEGER DEFAULT 0,
             subscription_type TEXT DEFAULT 'trial' CHECK(subscription_type IN ('trial','1day','7day','30day','lifetime')),
@@ -41,7 +42,8 @@ function getDB() {
             expires_at TEXT DEFAULT NULL,
             last_check TEXT DEFAULT NULL,
             created_at TEXT DEFAULT (datetime('now')),
-            created_by TEXT DEFAULT 'system'
+            created_by TEXT DEFAULT 'system',
+            FOREIGN KEY (user_id) REFERENCES users(id)
         )");
         
         $db->exec("CREATE TABLE IF NOT EXISTS admins (
@@ -80,6 +82,11 @@ function getDB() {
             last_login TEXT DEFAULT NULL
         )");
         
+        // Migration: add user_id column if missing
+        try {
+            $db->exec("ALTER TABLE license_keys ADD COLUMN user_id INTEGER DEFAULT NULL");
+        } catch (Exception $e) { /* column already exists */ }
+
         // Insert default admin if not exists
         $result = $db->querySingle("SELECT COUNT(*) FROM admins");
         if ($result == 0) {

@@ -44,8 +44,17 @@ $stmt->bindValue(':hash', $hash, SQLITE3_TEXT);
 $stmt->bindValue(':email', $email, SQLITE3_TEXT);
 $stmt->execute();
 
+$userId = $db->lastInsertRowID();
+
+$licenseKey = generateKey('AIM');
+$stmt = $db->prepare("INSERT INTO license_keys (license_key, user_id, subscription_type) VALUES (:key, :uid, 'trial')");
+$stmt->bindValue(':key', $licenseKey, SQLITE3_TEXT);
+$stmt->bindValue(':uid', $userId, SQLITE3_INTEGER);
+$stmt->execute();
+
 jsonResponse([
     'success' => true,
     'message' => 'Account created successfully',
-    'username' => $username
+    'username' => $username,
+    'license_key' => $licenseKey
 ]);

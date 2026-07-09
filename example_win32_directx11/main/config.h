@@ -22,6 +22,7 @@ inline void saveConfig()
 {
     json j;
     j["aimbot"]["enabled"] = var::checkbox;
+    j["aimbot"]["triggerbot"] = var::triggerbot;
     j["aimbot"]["smoothness"] = var::smooth;
     j["aimbot"]["aim_speed"] = var::aim_speed;
     j["aimbot"]["aim_height"] = var::aim_height;
@@ -59,6 +60,7 @@ inline void loadConfig()
         {
             auto& a = j["aimbot"];
             if (a.contains("enabled")) var::checkbox = a["enabled"];
+            if (a.contains("triggerbot")) var::triggerbot = a["triggerbot"];
             if (a.contains("smoothness")) var::smooth = a["smoothness"];
             if (a.contains("aim_speed")) var::aim_speed = a["aim_speed"];
             if (a.contains("aim_height")) var::aim_height = a["aim_height"];

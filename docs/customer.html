@@ -65,9 +65,9 @@
 
         <div class="card">
             <h2>License Keys</h2>
-            <p>Manage your license keys for AI Aim Assist.</p>
-            <div style="margin-top:20px;">
-                <p style="color:#888;font-size:13px;">You can activate your product using a license key. Enter your key in the application to get started.</p>
+            <p>Enter your license key in the application to activate it.</p>
+            <div id="keysContainer" style="margin-top:20px;">
+                <p style="color:#888;font-size:13px;">Loading your keys...</p>
             </div>
             <div class="mt-20 text-center">
                 <a href="admin/index.html" style="color:#e94560;text-decoration:none;font-size:13px;">Need help? Contact support</a>
@@ -84,6 +84,7 @@
     </div>
 
     <script>
+        const API_URL = 'https://ai-aimassist-source.onrender.com';
         const userData = JSON.parse(localStorage.getItem('customer_user'));
 
         if (!userData) {
@@ -93,6 +94,54 @@
             document.getElementById('profileUsername').textContent = userData.username;
             document.getElementById('profileEmail').textContent = userData.email || 'Not provided';
             document.getElementById('profileJoined').textContent = new Date().toLocaleDateString();
+            loadKeys();
+        }
+
+        async function loadKeys() {
+            const container = document.getElementById('keysContainer');
+            try {
+                const res = await fetch(API_URL + '/?action=user_keys', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: userData.username })
+                });
+                const data = await res.json();
+
+                if (data.success && data.keys.length > 0) {
+                    let html = '';
+                    data.keys.forEach(key => {
+                        const statusColor = key.is_banned ? '#e74c3c' : (key.is_active ? '#2ecc71' : '#f39c12');
+                        const statusText = key.is_banned ? 'Banned' : (key.is_active ? 'Active' : 'Inactive');
+                        const expiryText = key.expires_at ? 'Expires: ' + key.expires_at : 'Lifetime';
+                        
+                        html += '<div style="background:#0f3460;padding:15px;border-radius:5px;margin-bottom:10px;">';
+                        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">';
+                        html += '<code style="color:#fff;font-size:16px;letter-spacing:1px;" id="key-' + key.license_key + '">' + key.license_key + '</code>';
+                        html += '<button onclick="copyKey(\'' + key.license_key + '\')" style="background:#e94560;color:#fff;border:none;padding:6px 12px;border-radius:3px;cursor:pointer;font-size:12px;">Copy</button>';
+                        html += '</div>';
+                        html += '<div style="display:flex;gap:15px;font-size:12px;">';
+                        html += '<span style="color:' + statusColor + ';">' + statusText + '</span>';
+                        html += '<span style="color:#888;">' + key.subscription_type + '</span>';
+                        html += '<span style="color:#888;">' + expiryText + '</span>';
+                        html += '</div>';
+                        html += '</div>';
+                    });
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<p style="color:#888;font-size:13px;">No license keys found. Contact support.</p>';
+                }
+            } catch (err) {
+                container.innerHTML = '<p style="color:#e74c3c;font-size:13px;">Failed to load keys.</p>';
+            }
+        }
+
+        function copyKey(key) {
+            navigator.clipboard.writeText(key).then(() => {
+                const el = document.getElementById('key-' + key);
+                const btn = el.parentElement.querySelector('button');
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy', 1500);
+            });
         }
 
         function logout() {
