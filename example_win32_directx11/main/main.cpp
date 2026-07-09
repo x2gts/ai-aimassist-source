@@ -620,11 +620,9 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         ImGui::Separator();
                         ImGui::Spacing();
                         ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 0.8f), "Theme");
-                        ImGui::ColorEdit3("Accent", theme::accent, ImGuiColorEditFlags_NoInputs);
-                        ImGui::SameLine(200.0f);
-                        ImGui::ColorEdit3("Background", theme::bg, ImGuiColorEditFlags_NoInputs);
-                        ImGui::SameLine(400.0f);
-                        ImGui::ColorEdit3("Highlight", theme::highlight, ImGuiColorEditFlags_NoInputs);
+                        ImGui::ColorEdit3("Accent", theme::accent, ImGuiColorEditFlags_NoAlpha);
+                        ImGui::ColorEdit3("Background", theme::bg, ImGuiColorEditFlags_NoAlpha);
+                        ImGui::ColorEdit3("Highlight", theme::highlight, ImGuiColorEditFlags_NoAlpha);
                         
                         ImGui::Spacing();
                         ImGui::Separator();
