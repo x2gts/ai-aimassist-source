@@ -94,7 +94,7 @@
                 if (data.success) {
                     if (data.role === 'admin') {
                         localStorage.setItem('keyvex_admin_key', data.api_key);
-                        window.location.href = '../keysystem/admin/index.html';
+                        window.location.href = 'admin/index.html';
                     } else {
                         localStorage.setItem('customer_user', JSON.stringify({
                             username: data.username,
