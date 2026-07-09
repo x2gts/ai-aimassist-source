@@ -260,12 +260,13 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             ImGui::GetBackgroundDrawList()->AddCircle(
                 screenCenter,
                 var::fovRadius,
-                ImColor(255, 255, 255, 120),
+                ImColor(theme::accent[0], theme::accent[1], theme::accent[2], 0.5f),
                 64,
                 1.5f
             );
         }
 
+        theme::updateColors();
         CustomStyleColor();
 
         D3DX11_IMAGE_LOAD_INFO info;

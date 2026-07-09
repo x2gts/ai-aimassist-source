@@ -67,4 +67,27 @@ namespace theme {
     inline float accent[3] = { 0.855f, 0.376f, 0.090f };
     inline float bg[3] = { 0.063f, 0.063f, 0.063f };
     inline float highlight[3] = { 0.294f, 0.196f, 0.929f };
+
+    inline void updateColors()
+    {
+        float bgDim = 0.8f;
+        float bgLight = 1.2f;
+
+        colors::Car_Slider = ImColor(accent[0], accent[1], accent[2], 1.0f);
+        colors::Car_Slider_Hovered = ImColor(accent[0] * 1.05f, accent[1] * 1.05f, accent[2] * 1.05f, 1.0f);
+        colors::Car_Slider_Active = ImColor(accent[0] * 1.05f, accent[1] * 1.05f, accent[2] * 1.05f, 1.0f);
+
+        colors::Checkbox_Active = ImColor(accent[0], accent[1], accent[2], 1.0f);
+
+        colors::Tab_Selected = ImColor(highlight[0], highlight[1], highlight[2], 1.0f);
+
+        colors::main_color = ImColor(bg[0], bg[1], bg[2], 1.0f);
+        colors::lite_color = ImColor(bg[0] * bgLight, bg[1] * bgLight, bg[2] * bgLight, 1.0f);
+        colors::Slider = ImColor(bg[0], bg[1], bg[2], 1.0f);
+        colors::Slider_Hovered = ImColor(bg[0] * bgLight, bg[1] * bgLight, bg[2] * bgLight, 1.0f);
+        colors::Slider_Active = ImColor(bg[0] * bgLight, bg[1] * bgLight, bg[2] * bgLight, 1.0f);
+        colors::InputText = ImColor(bg[0], bg[1], bg[2], 1.0f);
+        colors::Button = ImColor(bg[0] * bgLight, bg[1] * bgLight, bg[2] * bgLight, 1.0f);
+        colors::Tab_Child = ImColor(bg[0] * bgDim, bg[1] * bgDim, bg[2] * bgDim, 1.0f);
+    }
 }
