@@ -83,9 +83,14 @@ function getDB() {
         )");
         
         // Migration: add user_id column if missing
-        try {
+        $hasUserId = false;
+        $cols = $db->query("PRAGMA table_info(license_keys)");
+        while ($col = $cols->fetchArray(SQLITE3_ASSOC)) {
+            if ($col['name'] === 'user_id') { $hasUserId = true; break; }
+        }
+        if (!$hasUserId) {
             $db->exec("ALTER TABLE license_keys ADD COLUMN user_id INTEGER DEFAULT NULL");
-        } catch (Exception $e) { /* column already exists */ }
+        }
 
         // Insert default admin if not exists
         $result = $db->querySingle("SELECT COUNT(*) FROM admins");
