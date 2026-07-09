@@ -15,6 +15,10 @@ void aimbot::aim_to(int x, int y, int box_w, int box_h)
     x = static_cast<int>(screen_width / 2 - ACTIVATION_RANGE / 2 + x + box_w / 2 + 5);
     y = static_cast<int>(screen_height / 2 - ACTIVATION_RANGE / 2 + y + (101 - static_cast<int>(var::aim_height)) + box_h / 4);
 
+    // Incorporate recoil offset so aimbot and recoil work together
+    x += static_cast<int>(var::recoil_offset_x);
+    y += static_cast<int>(var::recoil_offset_y);
+
     const int x_offset = x - screen_width / 2;
     const int y_offset = y - screen_height / 2;
 
@@ -40,9 +44,6 @@ void aimbot::recoil_control()
     if (!(GetAsyncKeyState(VK_RBUTTON) & 0x8000)) return;
     if (!(GetAsyncKeyState(VK_LBUTTON) & 0x8000)) return;
 
-    // Don't fight the aimbot — it already tracks through recoil
-    if ((GetAsyncKeyState(var::key0) & 0x8000) || (var::LTrigger && var::checkbox)) return;
-
     if (var::selected_operator >= 0 && var::selected_operator < recoil_data_count)
     {
         const RecoilPattern& pattern = recoil_data[var::selected_operator];
@@ -56,13 +57,21 @@ void aimbot::recoil_control()
         recoil_x_smooth = recoil_x_smooth * (1.0f - factor) + target_x * factor;
         recoil_y_smooth = recoil_y_smooth * (1.0f - factor) + target_y * factor;
 
-        mouse.move(static_cast<int>(recoil_x_smooth), static_cast<int>(recoil_y_smooth));
+        var::recoil_offset_x = recoil_x_smooth;
+        var::recoil_offset_y = recoil_y_smooth;
     }
     else
     {
         static float default_recoil_y = 0.0f;
         float target = 2.0f;
         default_recoil_y = default_recoil_y * 0.75f + target * 0.25f;
-        mouse.move(0, static_cast<int>(default_recoil_y));
+        var::recoil_offset_x = 0.0f;
+        var::recoil_offset_y = default_recoil_y;
+    }
+
+    // When aimbot is not tracking, apply recoil directly
+    if (!((GetAsyncKeyState(var::key0) & 0x8000) || (var::LTrigger && var::checkbox)))
+    {
+        mouse.move(static_cast<int>(var::recoil_offset_x), static_cast<int>(var::recoil_offset_y));
     }
 }

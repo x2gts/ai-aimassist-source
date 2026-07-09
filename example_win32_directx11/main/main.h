@@ -86,6 +86,8 @@ namespace var {
     inline int selected_operator = 0;
     inline int recoil_subtab = 0; // 0=ATK, 1=DEF
     inline bool operator_textures_loaded = false;
+    inline float recoil_offset_x = 0.0f;
+    inline float recoil_offset_y = 0.0f;
     inline int key0 = 0;
     inline int key4 = VK_INSERT;
     inline bool animated_background = false;
