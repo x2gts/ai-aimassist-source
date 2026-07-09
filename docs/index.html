@@ -3,243 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Key System Admin</title>
+    <title>AI Aim Assist</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; }
-        
-        .login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .login-box { background: #16213e; padding: 40px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 350px; }
-        .login-box h2 { text-align: center; margin-bottom: 30px; color: #e94560; }
-        .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: none; border-radius: 5px; background: #0f3460; color: #fff; font-size: 14px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .container { display: flex; justify-content: center; align-items: center; min-height: 100vh; width: 100%; padding: 20px; }
+        .login-box { background: #16213e; padding: 40px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 380px; }
+        .login-box h1 { text-align: center; margin-bottom: 5px; color: #e94560; font-size: 24px; }
+        .login-box p.subtitle { text-align: center; margin-bottom: 30px; color: #888; font-size: 14px; }
+        .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: none; border-radius: 5px; background: #0f3460; color: #fff; font-size: 14px; outline: none; }
+        .login-box input:focus { outline: 2px solid #e94560; }
         .login-box button { width: 100%; padding: 12px; border: none; border-radius: 5px; background: #e94560; color: #fff; font-size: 16px; cursor: pointer; transition: background 0.3s; }
         .login-box button:hover { background: #c73e54; }
-        
-        .dashboard { display: none; }
-        .header { background: #16213e; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e94560; }
-        .header h1 { color: #e94560; font-size: 20px; }
-        .header button { background: #e94560; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
-        
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 30px; }
-        .stat-card { background: #16213e; padding: 20px; border-radius: 10px; text-align: center; }
-        .stat-card h3 { color: #888; font-size: 14px; margin-bottom: 10px; }
-        .stat-card .value { color: #e94560; font-size: 32px; font-weight: bold; }
-        
-        .content { padding: 30px; }
-        .section { background: #16213e; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
-        .section h2 { color: #e94560; margin-bottom: 20px; font-size: 18px; }
-        
-        .form-row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-        .form-group { flex: 1; min-width: 150px; }
-        .form-group label { display: block; margin-bottom: 5px; color: #888; font-size: 12px; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: none; border-radius: 5px; background: #0f3460; color: #fff; }
-        .form-group button { background: #e94560; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #0f3460; }
-        th { color: #888; font-weight: normal; font-size: 12px; }
-        tr:hover { background: #0f3460; }
-        
-        .badge { padding: 4px 8px; border-radius: 3px; font-size: 11px; }
-        .badge-active { background: #2ecc71; color: #fff; }
-        .badge-inactive { background: #95a5a6; color: #fff; }
-        .badge-banned { background: #e74c3c; color: #fff; }
-        .badge-trial { background: #f39c12; color: #fff; }
-        
-        .btn { padding: 6px 12px; border: none; border-radius: 3px; cursor: pointer; font-size: 12px; }
-        .btn-danger { background: #e74c3c; color: #fff; }
-        .btn-warning { background: #f39c12; color: #fff; }
-        .btn-success { background: #2ecc71; color: #fff; }
-        
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab { padding: 10px 20px; background: #0f3460; border: none; border-radius: 5px; color: #888; cursor: pointer; }
-        .tab.active { background: #e94560; color: #fff; }
-        
-        .generated-keys { background: #0f3460; padding: 15px; border-radius: 5px; margin-top: 15px; font-family: monospace; white-space: pre-wrap; max-height: 200px; overflow-y: auto; }
-        
-        .error { color: #e74c3c; margin-top: 10px; }
-        .success { color: #2ecc71; margin-top: 10px; }
-        
-        #banModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
-        .modal-content { background: #16213e; padding: 30px; border-radius: 10px; width: 400px; }
-        .modal-content h3 { margin-bottom: 20px; color: #e94560; }
-        .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+        .login-box .link { text-align: center; margin-top: 20px; font-size: 13px; color: #888; }
+        .login-box .link a { color: #e94560; text-decoration: none; }
+        .login-box .link a:hover { text-decoration: underline; }
+        .error { color: #e74c3c; margin-top: 10px; font-size: 13px; text-align: center; }
+        .success { color: #2ecc71; margin-top: 10px; font-size: 13px; text-align: center; }
+        .info { color: #f39c12; margin-top: 10px; font-size: 13px; text-align: center; }
+        .hidden { display: none; }
+        .register-form { margin-top: 20px; border-top: 1px solid #0f3460; padding-top: 20px; }
+        .register-form h3 { text-align: center; color: #e94560; margin-bottom: 15px; font-size: 16px; }
+        .btn-secondary { background: #0f3460 !important; }
+        .btn-secondary:hover { background: #1a4a80 !important; }
+        .btn-cancel { background: transparent !important; border: 1px solid #555 !important; color: #aaa !important; margin-top: 10px; }
+        .btn-cancel:hover { background: #333 !important; }
     </style>
 </head>
 <body>
-    <!-- Login Form -->
-    <div class="login-container" id="loginContainer">
-        <div class="login-box">
-            <h2>Admin Panel</h2>
-            <input type="text" id="loginUsername" placeholder="Username">
-            <input type="password" id="loginPassword" placeholder="Password">
-            <label style="display:flex;align-items:center;gap:8px;margin-bottom:15px;color:#888;font-size:13px;cursor:pointer;">
-                <input type="checkbox" id="keepSignedIn" style="width:auto;">
-                Keep me signed in
-            </label>
-            <button onclick="login()">Login</button>
-            <div id="loginError" class="error"></div>
-        </div>
-    </div>
+    <div class="container">
+        <div class="login-box" id="loginBox">
+            <h1>AI Aim Assist</h1>
+            <p class="subtitle">Sign in to your account</p>
 
-    <!-- Dashboard -->
-    <div class="dashboard" id="dashboard">
-        <div class="header">
-            <h1>Key System Admin</h1>
-            <button onclick="logout()">Logout</button>
-        </div>
-
-        <div class="stats-grid" id="statsGrid">
-            <div class="stat-card"><h3>TOTAL KEYS</h3><div class="value" id="statTotal">0</div></div>
-            <div class="stat-card"><h3>ACTIVE KEYS</h3><div class="value" id="statActive">0</div></div>
-            <div class="stat-card"><h3>BANNED</h3><div class="value" id="statBanned">0</div></div>
-            <div class="stat-card"><h3>ONLINE (24H)</h3><div class="value" id="statOnline">0</div></div>
-        </div>
-
-        <div class="content">
-            <div class="tabs">
-                <button class="tab active" onclick="showTab('generate')">Generate Keys</button>
-                <button class="tab" onclick="showTab('manage')">Manage Keys</button>
-                <button class="tab" onclick="showTab('bans')">Ban List</button>
-                <button class="tab" onclick="showTab('log')">Activity Log</button>
+            <div id="loginForm">
+                <input type="text" id="loginUsername" placeholder="Username" autocomplete="username">
+                <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+                <button onclick="handleLogin()">Sign In</button>
+                <div id="loginMessage" class="error"></div>
+                <div class="link">Don't have an account? <a href="#" onclick="showRegister()">Create one</a></div>
             </div>
 
-            <!-- Generate Keys Tab -->
-            <div class="section tab-content" id="tab-generate">
-                <h2>Generate New Keys</h2>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Prefix</label>
-                        <input type="text" id="genPrefix" value="AIM" maxlength="5">
-                    </div>
-                    <div class="form-group">
-                        <label>Count</label>
-                        <input type="number" id="genCount" value="10" min="1" max="100">
-                    </div>
-                    <div class="form-group">
-                        <label>Subscription</label>
-                        <select id="genSubscription">
-                            <option value="trial">Trial (24h)</option>
-                            <option value="1day">1 Day</option>
-                            <option value="7day">7 Days</option>
-                            <option value="30day">30 Days</option>
-                            <option value="lifetime">Lifetime</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>&nbsp;</label>
-                        <button onclick="generateKeys()">Generate</button>
-                    </div>
-                </div>
-                <div id="generatedKeys" class="generated-keys" style="display:none;"></div>
-                <div id="genError" class="error"></div>
-            </div>
-
-            <!-- Manage Keys Tab -->
-            <div class="section tab-content" id="tab-manage" style="display:none;">
-                <h2>Manage Keys</h2>
-                <div class="form-row">
-                    <div class="form-group" style="flex:2;">
-                        <label>Search (Key or HWID)</label>
-                        <input type="text" id="searchKey" placeholder="Search...">
-                    </div>
-                    <div class="form-group">
-                        <label>&nbsp;</label>
-                        <button onclick="searchKeys()">Search</button>
-                    </div>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Key</th>
-                            <th>HWID</th>
-                            <th>Type</th>
-                            <th>Status</th>
-                            <th>Expires</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="keysTable"></tbody>
-                </table>
-                <div style="margin-top:15px;">
-                    <button class="btn btn-warning" onclick="prevPage()">Previous</button>
-                    <span id="pageInfo" style="margin:0 15px;">Page 1</span>
-                    <button class="btn btn-warning" onclick="nextPage()">Next</button>
-                </div>
-            </div>
-
-            <!-- Ban List Tab -->
-            <div class="section tab-content" id="tab-bans" style="display:none;">
-                <h2>Ban List</h2>
-                <div class="form-row">
-                    <div class="form-group" style="flex:2;">
-                        <label>License Key to Ban</label>
-                        <input type="text" id="banKey" placeholder="Enter license key">
-                    </div>
-                    <div class="form-group" style="flex:2;">
-                        <label>Reason</label>
-                        <input type="text" id="banReason" placeholder="Reason for ban">
-                    </div>
-                    <div class="form-group">
-                        <label>&nbsp;</label>
-                        <button onclick="banUser()" style="background:#e74c3c;">Ban</button>
-                    </div>
-                </div>
-                <div id="banError" class="error"></div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Key</th>
-                            <th>Reason</th>
-                            <th>Banned At</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="bansTable"></tbody>
-                </table>
-                <button class="btn btn-warning" onclick="loadBans()" style="margin-top:15px;">Refresh</button>
-            </div>
-
-            <!-- Activity Log Tab -->
-            <div class="section tab-content" id="tab-log" style="display:none;">
-                <h2>Activity Log</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Action</th>
-                            <th>Key</th>
-                            <th>HWID</th>
-                            <th>IP</th>
-                            <th>Details</th>
-                        </tr>
-                    </thead>
-                    <tbody id="logTable"></tbody>
-                </table>
-                <button class="btn btn-warning" onclick="loadLog()" style="margin-top:15px;">Refresh</button>
+            <div id="registerForm" class="hidden register-form">
+                <h3>Create Account</h3>
+                <input type="text" id="regUsername" placeholder="Username" autocomplete="off">
+                <input type="email" id="regEmail" placeholder="Email (optional)" autocomplete="off">
+                <input type="password" id="regPassword" placeholder="Password" autocomplete="new-password">
+                <input type="password" id="regConfirm" placeholder="Confirm password" autocomplete="new-password">
+                <button onclick="handleRegister()">Create Account</button>
+                <button class="btn-cancel" onclick="showLogin()">Back to Sign In</button>
+                <div id="registerMessage" class="error"></div>
             </div>
         </div>
     </div>
 
     <script>
         const API_URL = 'https://ai-aimassist-source.onrender.com';
-        let apiKey = localStorage.getItem('keyvex_admin_key') || '';
-        let currentPage = 1;
 
-        // Auto-login if key is saved
-        if (apiKey) {
-            document.getElementById('loginContainer').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-            loadStats();
-            loadKeys();
+        function showRegister() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+            document.getElementById('loginMessage').textContent = '';
         }
 
-        // Login
-        async function login() {
-            const username = document.getElementById('loginUsername').value;
+        function showLogin() {
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('registerMessage').textContent = '';
+        }
+
+        async function handleLogin() {
+            const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value;
-            const keepSignedIn = document.getElementById('keepSignedIn').checked;
-            
+            const msgEl = document.getElementById('loginMessage');
+
+            if (!username || !password) {
+                msgEl.className = 'error';
+                msgEl.textContent = 'Please enter username and password';
+                return;
+            }
+
             try {
                 const res = await fetch(API_URL + '/?action=login', {
                     method: 'POST',
@@ -247,228 +90,96 @@
                     body: JSON.stringify({ username, password })
                 });
                 const data = await res.json();
-                
+
                 if (data.success) {
-                    apiKey = data.api_key;
-                    if (keepSignedIn) {
-                        localStorage.setItem('keyvex_admin_key', apiKey);
+                    if (data.role === 'admin') {
+                        localStorage.setItem('keyvex_admin_key', data.api_key);
+                        window.location.href = '../keysystem/admin/index.html';
+                    } else {
+                        localStorage.setItem('customer_user', JSON.stringify({
+                            username: data.username,
+                            email: data.email || ''
+                        }));
+                        window.location.href = 'customer.html';
                     }
-                    document.getElementById('loginContainer').style.display = 'none';
-                    document.getElementById('dashboard').style.display = 'block';
-                    loadStats();
-                    loadKeys();
                 } else {
-                    document.getElementById('loginError').textContent = data.message;
+                    if (data.exists === false) {
+                        msgEl.className = 'info';
+                        msgEl.textContent = 'User not found. Would you like to ';
+                        msgEl.innerHTML += '<a href="#" onclick="showRegister()" style="color:#e94560;">create an account</a>?';
+                    } else {
+                        msgEl.className = 'error';
+                        msgEl.textContent = data.message || 'Login failed';
+                    }
                 }
             } catch (err) {
-                document.getElementById('loginError').textContent = 'Connection failed';
+                msgEl.className = 'error';
+                msgEl.textContent = 'Connection failed. Please try again.';
             }
         }
 
-        function logout() {
-            apiKey = '';
-            localStorage.removeItem('keyvex_admin_key');
-            document.getElementById('loginContainer').style.display = 'flex';
-            document.getElementById('dashboard').style.display = 'none';
-        }
+        async function handleRegister() {
+            const username = document.getElementById('regUsername').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirm = document.getElementById('regConfirm').value;
+            const msgEl = document.getElementById('registerMessage');
 
-        // API calls
-        async function apiCall(endpoint, data = null, method = 'POST') {
-            const options = {
-                method,
-                headers: {
-                    'X-API-Key': apiKey,
-                    'Content-Type': 'application/json'
-                }
-            };
-            if (data && method === 'POST') {
-                options.body = JSON.stringify(data);
-            }
-                        const res = await fetch(API_URL + '/?action=' + endpoint, options);
-            return res.json();
-        }
-
-        // Load stats
-        async function loadStats() {
-            const data = await apiCall('stats', null, 'GET');
-            if (data.success) {
-                document.getElementById('statTotal').textContent = data.stats.total_keys;
-                document.getElementById('statActive').textContent = data.stats.active_keys;
-                document.getElementById('statBanned').textContent = data.stats.banned_keys;
-                document.getElementById('statOnline').textContent = data.stats.online_24h;
-            }
-        }
-
-        // Generate keys
-        async function generateKeys() {
-            const prefix = document.getElementById('genPrefix').value;
-            const count = document.getElementById('genCount').value;
-            const subscription = document.getElementById('genSubscription').value;
-            
-            const data = await apiCall('generate', {
-                prefix, count, subscription
-            });
-            
-            if (data.success) {
-                document.getElementById('generatedKeys').style.display = 'block';
-                document.getElementById('generatedKeys').textContent = data.keys.join('\n');
-                document.getElementById('genError').className = 'success';
-                document.getElementById('genError').textContent = data.message;
-                loadStats();
-            } else {
-                document.getElementById('genError').className = 'error';
-                document.getElementById('genError').textContent = data.message;
-            }
-        }
-
-        // Load keys
-        async function loadKeys(page = 1, search = '') {
-            currentPage = page;
-            const data = await apiCall(`list&page=${page}&search=${search}`, null, 'GET');
-            
-            if (data.success) {
-                const tbody = document.getElementById('keysTable');
-                tbody.innerHTML = '';
-                
-                data.keys.forEach(key => {
-                    const statusClass = key.is_banned ? 'badge-banned' : (key.is_active ? 'badge-active' : 'badge-inactive');
-                    const statusText = key.is_banned ? 'Banned' : (key.is_active ? 'Active' : 'Inactive');
-                    
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><code>${key.license_key}</code></td>
-                            <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;">${key.hwid || '-'}</td>
-                            <td><span class="badge badge-trial">${key.subscription_type}</span></td>
-                            <td><span class="badge ${statusClass}">${statusText}</span></td>
-                            <td>${key.expires_at || 'Never'}</td>
-                            <td>
-                                <button class="btn btn-danger" onclick="revokeKey('${key.license_key}')">Revoke</button>
-                                <button class="btn btn-warning" onclick="quickBan('${key.license_key}')">Ban</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-                
-                document.getElementById('pageInfo').textContent = `Page ${data.page} of ${data.pages}`;
-            }
-        }
-
-        function searchKeys() {
-            const search = document.getElementById('searchKey').value;
-            loadKeys(1, search);
-        }
-
-        function prevPage() {
-            if (currentPage > 1) loadKeys(currentPage - 1);
-        }
-
-        function nextPage() {
-            loadKeys(currentPage + 1);
-        }
-
-        async function revokeKey(key) {
-            if (!confirm('Revoke this key?')) return;
-            const data = await apiCall('revoke', { key });
-            if (data.success) {
-                loadKeys(currentPage);
-                loadStats();
-            }
-        }
-
-        function quickBan(key) {
-            document.getElementById('banKey').value = key;
-            showTab('bans');
-        }
-
-        // Ban user
-        async function banUser() {
-            const key = document.getElementById('banKey').value;
-            const reason = document.getElementById('banReason').value;
-            
-            if (!key) {
-                document.getElementById('banError').textContent = 'Enter a license key';
+            if (!username || !password) {
+                msgEl.className = 'error';
+                msgEl.textContent = 'Username and password are required';
                 return;
             }
-            
-            const data = await apiCall('ban', { key, reason });
-            if (data.success) {
-                document.getElementById('banError').className = 'success';
-                document.getElementById('banError').textContent = 'Key banned';
-                document.getElementById('banKey').value = '';
-                document.getElementById('banReason').value = '';
-                loadStats();
-                loadBans();
-            } else {
-                document.getElementById('banError').className = 'error';
-                document.getElementById('banError').textContent = data.message;
-            }
-        }
 
-        async function loadBans() {
-            const data = await apiCall('list', null, 'GET');
-            if (data.success) {
-                const tbody = document.getElementById('bansTable');
-                tbody.innerHTML = '';
-                data.keys.filter(k => k.is_banned).forEach(key => {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><code>${key.license_key}</code></td>
-                            <td>Banned</td>
-                            <td>${key.activated_at || '-'}</td>
-                            <td>
-                                <button class="btn btn-success" onclick="unbanKey('${key.license_key}')">Unban</button>
-                            </td>
-                        </tr>
-                    `;
+            if (password !== confirm) {
+                msgEl.className = 'error';
+                msgEl.textContent = 'Passwords do not match';
+                return;
+            }
+
+            if (username.length < 3) {
+                msgEl.className = 'error';
+                msgEl.textContent = 'Username must be at least 3 characters';
+                return;
+            }
+
+            if (password.length < 4) {
+                msgEl.className = 'error';
+                msgEl.textContent = 'Password must be at least 4 characters';
+                return;
+            }
+
+            try {
+                const res = await fetch(API_URL + '/?action=register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, email })
                 });
+                const data = await res.json();
+
+                if (data.success) {
+                    msgEl.className = 'success';
+                    msgEl.textContent = 'Account created! You can now sign in.';
+                    document.getElementById('regUsername').value = '';
+                    document.getElementById('regEmail').value = '';
+                    document.getElementById('regPassword').value = '';
+                    document.getElementById('regConfirm').value = '';
+                    setTimeout(() => showLogin(), 1500);
+                } else {
+                    msgEl.className = 'error';
+                    msgEl.textContent = data.message || 'Registration failed';
+                }
+            } catch (err) {
+                msgEl.className = 'error';
+                msgEl.textContent = 'Connection failed. Please try again.';
             }
         }
 
-        async function unbanKey(key) {
-            if (!confirm('Unban this key?')) return;
-            const data = await apiCall('unban', { key });
-            if (data.success) {
-                loadBans();
-                loadStats();
-            }
-        }
-
-        // Activity log
-        async function loadLog() {
-            const data = await apiCall('log', null, 'GET');
-            if (data.success) {
-                const tbody = document.getElementById('logTable');
-                tbody.innerHTML = '';
-                data.logs.forEach(log => {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${log.created_at}</td>
-                            <td>${log.action}</td>
-                            <td>${log.license_key || '-'}</td>
-                            <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;">${log.hwid || '-'}</td>
-                            <td>${log.ip_address || '-'}</td>
-                            <td>${log.details || '-'}</td>
-                        </tr>
-                    `;
-                });
-            }
-        }
-
-        // Tab switching
-        function showTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-' + tab).style.display = 'block';
-            event.target.classList.add('active');
-            
-            if (tab === 'manage') loadKeys();
-            if (tab === 'log') loadLog();
-            if (tab === 'bans') loadBans();
-        }
-
-        // Enter key login
         document.getElementById('loginPassword').addEventListener('keypress', e => {
-            if (e.key === 'Enter') login();
+            if (e.key === 'Enter') handleLogin();
+        });
+        document.getElementById('regConfirm').addEventListener('keypress', e => {
+            if (e.key === 'Enter') handleRegister();
         });
     </script>
 </body>

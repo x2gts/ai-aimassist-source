@@ -14,6 +14,8 @@ if ($action === 'validate' && $method === 'POST') {
     require __DIR__ . '/validate.php';
 } elseif ($action === 'login' && $method === 'POST') {
     require __DIR__ . '/login.php';
+} elseif ($action === 'register' && $method === 'POST') {
+    require __DIR__ . '/register.php';
 } elseif (strpos($action, 'admin') === 0 || in_array($action, ['generate', 'list', 'revoke', 'ban', 'unban', 'stats', 'log'])) {
     require __DIR__ . '/admin.php';
 } else {

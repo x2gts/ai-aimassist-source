@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - AI Aim Assist</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; }
+        .header { background: #16213e; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e94560; }
+        .header h1 { color: #e94560; font-size: 20px; }
+        .header .user-info { display: flex; align-items: center; gap: 15px; }
+        .header .user-info span { color: #888; font-size: 14px; }
+        .header button { background: #e94560; color: #fff; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 13px; }
+        .header button:hover { background: #c73e54; }
+        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        .card { background: #16213e; border-radius: 10px; padding: 30px; margin-bottom: 20px; }
+        .card h2 { color: #e94560; margin-bottom: 20px; font-size: 18px; }
+        .card p { color: #aaa; font-size: 14px; line-height: 1.6; }
+        .card .label { color: #888; font-size: 12px; display: block; margin-bottom: 5px; }
+        .card .value { color: #fff; font-size: 16px; margin-bottom: 15px; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        @media (max-width: 600px) { .info-grid { grid-template-columns: 1fr; } }
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 3px; font-size: 12px; background: #0f3460; color: #e94560; }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; }
+        .btn-primary { background: #e94560; color: #fff; }
+        .btn-primary:hover { background: #c73e54; }
+        .btn-secondary { background: #0f3460; color: #fff; }
+        .btn-secondary:hover { background: #1a4a80; }
+        .text-center { text-align: center; }
+        .mt-20 { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>AI Aim Assist</h1>
+        <div class="user-info">
+            <span id="displayUsername">User</span>
+            <button onclick="logout()">Sign Out</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Account Overview</h2>
+            <div class="info-grid">
+                <div>
+                    <span class="label">Username</span>
+                    <div class="value" id="profileUsername">-</div>
+                </div>
+                <div>
+                    <span class="label">Email</span>
+                    <div class="value" id="profileEmail">-</div>
+                </div>
+                <div>
+                    <span class="label">Status</span>
+                    <div class="value"><span class="badge">Active</span></div>
+                </div>
+                <div>
+                    <span class="label">Member Since</span>
+                    <div class="value" id="profileJoined">-</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>License Keys</h2>
+            <p>Manage your license keys for AI Aim Assist.</p>
+            <div style="margin-top:20px;">
+                <p style="color:#888;font-size:13px;">You can activate your product using a license key. Enter your key in the application to get started.</p>
+            </div>
+            <div class="mt-20 text-center">
+                <a href="../keysystem/admin/index.html" style="color:#e94560;text-decoration:none;font-size:13px;">Need help? Contact support</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Downloads</h2>
+            <p>Download the latest version of AI Aim Assist.</p>
+            <div class="mt-20">
+                <button class="btn btn-primary" onclick="alert('Download started')">Download Latest Version</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const userData = JSON.parse(localStorage.getItem('customer_user'));
+
+        if (!userData) {
+            window.location.href = 'index.html';
+        } else {
+            document.getElementById('displayUsername').textContent = userData.username;
+            document.getElementById('profileUsername').textContent = userData.username;
+            document.getElementById('profileEmail').textContent = userData.email || 'Not provided';
+            document.getElementById('profileJoined').textContent = new Date().toLocaleDateString();
+        }
+
+        function logout() {
+            localStorage.removeItem('customer_user');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

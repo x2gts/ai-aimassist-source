@@ -71,6 +71,15 @@ function getDB() {
             created_at TEXT DEFAULT (datetime('now'))
         )");
         
+        $db->exec("CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE,
+            password_hash TEXT NOT NULL,
+            email TEXT DEFAULT NULL,
+            created_at TEXT DEFAULT (datetime('now')),
+            last_login TEXT DEFAULT NULL
+        )");
+        
         // Insert default admin if not exists
         $result = $db->querySingle("SELECT COUNT(*) FROM admins");
         if ($result == 0) {
