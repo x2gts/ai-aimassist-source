@@ -6,7 +6,8 @@
 #include <sstream>
 #include <fstream>
 
-static bool animated_background = false;
+#include "config.h"
+
 static ID3D11ShaderResourceView* dr = nullptr;
 static ID3D11ShaderResourceView* dr1 = nullptr;
 static RECT rc = { 0 };
@@ -185,6 +186,8 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 
+    loadConfig();
+
     // Auto-login with saved key
     {
         std::string saved_key;
@@ -195,10 +198,15 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
             {
                 login = true;
             }
-            else
+            else if (auth.getLastErrorCode() == "KEY_BANNED")
             {
                 deleteKey();
                 login_key[0] = '\0';
+                strcpy_s(login_error_message, "Your key has been banned");
+            }
+            else
+            {
+                strcpy_s(login_error_message, "Key saved but could not verify. Check your connection.");
             }
         }
     }
@@ -240,6 +248,21 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 ImVec2((float)(var::boxX + var::Width), (float)(var::boxY + var::Height)),
                 ImColor(255, 0, 0, 255),
                 0.0f, 0, 2.0f
+            );
+        }
+
+        if (var::fovCircle)
+        {
+            ImVec2 screenCenter = ImVec2(
+                GetSystemMetrics(SM_CXSCREEN) * 0.5f,
+                GetSystemMetrics(SM_CYSCREEN) * 0.5f
+            );
+            ImGui::GetBackgroundDrawList()->AddCircle(
+                screenCenter,
+                var::fovRadius,
+                ImColor(255, 255, 255, 120),
+                64,
+                1.5f
             );
         }
 
@@ -334,7 +357,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0, 0, 0, 0));
                 ImGui::BeginChild("G-Tab", ImVec2(173.0f * dpi_scale, 790.0f * dpi_scale), false);
                 {
-                    ImGui::GetForegroundDrawList()->AddText(tab_text3, 20.0f * dpi_scale, ImVec2(20.0f * dpi_scale + p.x, 12.0f * dpi_scale + p.y), ImColor(255, 255, 255, 255), "       Keyvex");
+                    ImGui::GetForegroundDrawList()->AddText(tab_text3, 20.0f * dpi_scale, ImVec2(20.0f * dpi_scale + p.x, 12.0f * dpi_scale + p.y), ImColor(255, 255, 255, 255), "       Bloodbot");
                     ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(0.0f + p.x, 0.0f + p.y), ImVec2(273.0f * dpi_scale + p.x, 790.0f * dpi_scale + p.y), ImGui::GetColorU32(colors::Tab_Child), s.WindowRounding);
 
                     ImGui::SetCursorPosY(60.0f);
@@ -342,8 +365,10 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                     
                     if (ImGui::Tab("H", "Aimbot", "AI based aimbot", tabs == 0, ImVec2(150.0f * dpi_scale, 42.0f * dpi_scale)))
                         tabs = 0;
-                    if (ImGui::Tab("E", "Misc", "Other settings", tabs == 1, ImVec2(150.0f * dpi_scale, 42.0f * dpi_scale)))
+                    if (ImGui::Tab("G", "Recoil", "Recoil control", tabs == 1, ImVec2(150.0f * dpi_scale, 42.0f * dpi_scale)))
                         tabs = 1;
+                    if (ImGui::Tab("E", "Misc", "Other settings", tabs == 2, ImVec2(150.0f * dpi_scale, 42.0f * dpi_scale)))
+                        tabs = 2;
                 }
                 ImGui::EndChild();
                 ImGui::PopStyleColor();
@@ -375,7 +400,8 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         ImGui::SetWindowFontScale(dpi_scale);
                         ImGui::Checkbox("Aimbot", &var::checkbox);
                         ImGui::Keybind("Keybind", &var::key0, true);
-                        ImGui::SliderFloat("Smoothness", &var::smooth, 5.0f, 100.0f, "%.3f", 0);
+                        ImGui::SliderFloat("Smoothness", &var::smooth, 1.0f, 100.0f, "%.1f", 0);
+                        ImGui::SliderFloat("Aim speed", &var::aim_speed, 0.1f, 5.0f, "%.1f", 0);
                         ImGui::SliderFloat("Aim height", &var::aim_height, 1.0f, 100.0f, "%.3f", 0);
                         ImGui::SliderInt("Scanning frequence", &var::scannFPS, 1, 250, "%d FPS", 0);
                         ImGui::SameLine(270.0f);
@@ -392,11 +418,9 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                             ImGui::SetTooltip("Soon");
                         }
                         ImGui::Checkbox("Show FOV", &var::fovCircle);
-                        ImGui::SameLine(270.0f);
-                        ImGui::Text("[?]");
-                        if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+                        if (var::fovCircle)
                         {
-                            ImGui::SetTooltip("Soon");
+                            ImGui::SliderFloat("FOV Radius", &var::fovRadius, 50.0f, 500.0f, "%.0f", 0);
                         }
                     }
                     ImGui::EndChild();
@@ -438,6 +462,148 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 {
                     ImGui::BeginChildPos("", ImVec2(620.0f * dpi_scale, 100.0f * dpi_scale));
                     {
+                        ImGui::GetForegroundDrawList()->AddText(tab_text3, 26.0f * dpi_scale, ImVec2(450.0f * dpi_scale + p.x, 55.0f * dpi_scale + p.y), ImColor(255, 255, 255, 255), "Recoil Control");
+                        ImGui::GetForegroundDrawList()->AddText(tab_text3, 16.0f * dpi_scale, ImVec2(390.0f * dpi_scale + p.x, 85.0f * dpi_scale + p.y), ImColor(255, 255, 255, 255), "Select operator and adjust recoil patterns");
+                    }
+                    ImGui::EndChild();
+
+                    ImGui::SetCursorPosY(110.0f * dpi_scale);
+                    ImGui::BeginChildPos("##recoil_tabs", ImVec2(620.0f * dpi_scale, 35.0f * dpi_scale));
+                    {
+                        ImGui::SetWindowFontScale(dpi_scale);
+                        ImVec2 tab_p = ImGui::GetWindowPos();
+                        float tab_w = 310.0f * dpi_scale;
+
+                        if (var::recoil_subtab == 0)
+                        {
+                            if (ImGui::Button("ATK##tab", ImVec2(tab_w, 35.0f * dpi_scale)))
+                                var::recoil_subtab = 0;
+                            ImGui::SameLine();
+                            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.1f, 0.12f, 1.0f));
+                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.15f, 0.15f, 0.18f, 1.0f));
+                            if (ImGui::Button("DEF##tab", ImVec2(tab_w, 35.0f * dpi_scale)))
+                                var::recoil_subtab = 1;
+                            ImGui::PopStyleColor(2);
+                        }
+                        else
+                        {
+                            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.1f, 0.12f, 1.0f));
+                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.15f, 0.15f, 0.18f, 1.0f));
+                            if (ImGui::Button("ATK##tab", ImVec2(tab_w, 35.0f * dpi_scale)))
+                                var::recoil_subtab = 0;
+                            ImGui::PopStyleColor(2);
+                            ImGui::SameLine();
+                            if (ImGui::Button("DEF##tab", ImVec2(tab_w, 35.0f * dpi_scale)))
+                                var::recoil_subtab = 1;
+                        }
+                    }
+                    ImGui::EndChild();
+
+                    ImGui::SetCursorPosY(155.0f * dpi_scale);
+                    ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetColorU32(colors::lite_color));
+                    ImGui::BeginChild("recoil_ops", ImVec2(620.0f * dpi_scale, 460.0f * dpi_scale), false, ImGuiWindowFlags_AlwaysVerticalScrollbar);
+                    {
+                        ImGui::SetWindowFontScale(dpi_scale);
+
+                        ImGui::Checkbox("Recoil control", &var::recoil_control);
+
+                        ImGui::Spacing();
+                        ImGui::Spacing();
+
+                        float btn_size = 64.0f * dpi_scale;
+                        float padding = 8.0f * dpi_scale;
+                        float avail_w = 600.0f * dpi_scale;
+                        int cols = (int)((avail_w + padding) / (btn_size + padding));
+                        if (cols < 1) cols = 1;
+
+                        ImGuiStyle& style = ImGui::GetStyle();
+                        ImVec2 old_spacing = style.ItemSpacing;
+                        style.ItemSpacing = ImVec2(padding, padding);
+
+                        if (!var::operator_textures_loaded)
+                        {
+                            for (int i = 0; i < 63; i++)
+                            {
+                                D3DX11CreateShaderResourceViewFromMemory(
+                                    g_pd3dDevice,
+                                    operator_icons[i].data,
+                                    operator_icons[i].size,
+                                    nullptr, nullptr,
+                                    &operator_textures[i], nullptr);
+                            }
+                            var::operator_textures_loaded = true;
+                        }
+
+                        int col = 0;
+                        for (int i = 0; i < 63; i++)
+                        {
+                            if (is_atk[i] != (var::recoil_subtab == 0))
+                                continue;
+
+                            bool selected = (var::selected_operator == i);
+
+                            ImGui::PushID(i);
+
+                            ImVec2 btn_pos = ImGui::GetCursorScreenPos();
+                            ImVec2 btn_size2 = ImVec2(btn_size, btn_size);
+
+                            bool clicked = ImGui::InvisibleButton("##opbtn", btn_size2);
+                            if (clicked)
+                                var::selected_operator = i;
+
+                            ImDrawList* dl = ImGui::GetWindowDrawList();
+
+                            ImU32 bg_col = selected ? IM_COL32(77, 128, 230, 255) : IM_COL32(38, 38, 46, 255);
+                            dl->AddRectFilled(btn_pos, ImVec2(btn_pos.x + btn_size, btn_pos.y + btn_size), bg_col, 6.0f);
+
+                            if (operator_textures[i])
+                            {
+                                float pad = 2.0f * dpi_scale;
+                                dl->AddImage(
+                                    (ImTextureID)operator_textures[i],
+                                    ImVec2(btn_pos.x + pad, btn_pos.y + pad),
+                                    ImVec2(btn_pos.x + btn_size - pad, btn_pos.y + btn_size - pad),
+                                    ImVec2(0, 0), ImVec2(1, 1),
+                                    IM_COL32(255, 255, 255, 255));
+                            }
+                            else
+                            {
+                                ImVec2 ts = ImGui::CalcTextSize(recoil_data[i].name);
+                                dl->AddText(
+                                    ImVec2(btn_pos.x + btn_size / 2 - ts.x / 2, btn_pos.y + btn_size / 2 - ts.y / 2),
+                                    IM_COL32(200, 200, 200, 255), recoil_data[i].name);
+                            }
+
+                            if (selected)
+                            {
+                                dl->AddRect(btn_pos, ImVec2(btn_pos.x + btn_size, btn_pos.y + btn_size),
+                                    IM_COL32(100, 150, 255, 255), 6.0f, 0, 2.0f);
+                            }
+
+                            ImGui::PopID();
+
+                            col++;
+                            if (col % cols != 0)
+                                ImGui::SameLine();
+                        }
+
+                        style.ItemSpacing = old_spacing;
+
+                        ImGui::Spacing();
+                        ImGui::Separator();
+                        ImGui::Spacing();
+                        ImGui::TextColored(ImVec4(0.8f, 0.8f, 0.8f, 1.0f), "%s", recoil_data[var::selected_operator].name);
+                        ImGui::SameLine();
+                        ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), " - %s", recoil_data[var::selected_operator].weapon);
+                    }
+                    ImGui::EndChild();
+                    ImGui::PopStyleColor();
+                }
+                break;
+                case 2:
+                {
+                    ImGui::BeginChildPos("", ImVec2(620.0f * dpi_scale, 100.0f * dpi_scale));
+                    {
                         ImGui::GetForegroundDrawList()->AddText(tab_text3, 26.0f * dpi_scale, ImVec2(450.0f * dpi_scale + p.x, 55.0f * dpi_scale + p.y), ImColor(255, 255, 255, 255), "Miscellaneous");
                         ImGui::GetForegroundDrawList()->AddText(tab_text3, 16.0f * dpi_scale, ImVec2(390.0f * dpi_scale + p.x, 85.0f * dpi_scale + p.y), ImColor(255, 255, 255, 255), "Modify menu games and other functions");
                     }
@@ -446,7 +612,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                     ImGui::BeginChildPos("Misc", ImVec2(620.0f * dpi_scale, 490.0f * dpi_scale));
                     {
                         ImGui::SetWindowFontScale(dpi_scale);
-                        ImGui::Checkbox("Render animated background", &animated_background);
+                        ImGui::Checkbox("Render animated background", &var::animated_background);
                         ImGui::Keybind("Hide menu", &var::key4, true);
                         
                         ImGui::Spacing();
@@ -454,6 +620,19 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         ImGui::Spacing();
                         ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 0.8f), "Detection: %s", var::detection_backend.c_str());
                         
+                        ImGui::Spacing();
+                        ImGui::Separator();
+                        ImGui::Spacing();
+                        if (ImGui::Button("Save config", ImVec2(200.0f * dpi_scale, 35.0f * dpi_scale)))
+                        {
+                            saveConfig();
+                        }
+                        ImGui::SameLine();
+                        if (ImGui::Button("Load config", ImVec2(200.0f * dpi_scale, 35.0f * dpi_scale)))
+                        {
+    loadConfig();
+    loadRecoilPatterns();
+                        }
                         ImGui::Spacing();
                         ImGui::Separator();
                         ImGui::Spacing();
@@ -474,7 +653,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                     ImGui::PopStyleColor();
                 }
 
-                if (animated_background)
+                if (var::animated_background)
                     Particles();
 
                 ImGui::PopStyleVar();

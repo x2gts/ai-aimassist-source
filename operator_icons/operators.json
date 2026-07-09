@@ -1,0 +1,695 @@
+{
+  "ash": {
+    "name": "Ash",
+    "color": [
+      220,
+      50,
+      50
+    ],
+    "weapon": "R4-C",
+    "v_recoil": 0.35,
+    "h_recoil": 0.08
+  },
+  "thermite": {
+    "name": "Thermite",
+    "color": [
+      180,
+      100,
+      50
+    ],
+    "weapon": "556XI",
+    "v_recoil": 0.4,
+    "h_recoil": 0.1
+  },
+  "hibana": {
+    "name": "Hibana",
+    "color": [
+      200,
+      50,
+      100
+    ],
+    "weapon": "Type-89",
+    "v_recoil": 0.38,
+    "h_recoil": 0.12
+  },
+  "sledge": {
+    "name": "Sledge",
+    "color": [
+      50,
+      150,
+      50
+    ],
+    "weapon": "L85A2",
+    "v_recoil": 0.3,
+    "h_recoil": 0.06
+  },
+  "thatcher": {
+    "name": "Thatcher",
+    "color": [
+      50,
+      50,
+      180
+    ],
+    "weapon": "AR33",
+    "v_recoil": 0.32,
+    "h_recoil": 0.09
+  },
+  "twitch": {
+    "name": "Twitch",
+    "color": [
+      150,
+      50,
+      150
+    ],
+    "weapon": "F2",
+    "v_recoil": 0.28,
+    "h_recoil": 0.07
+  },
+  "glaz": {
+    "name": "Glaz",
+    "color": [
+      200,
+      200,
+      50
+    ],
+    "weapon": "OTs-03",
+    "v_recoil": 0.25,
+    "h_recoil": 0.05
+  },
+  "fuze": {
+    "name": "Fuze",
+    "color": [
+      100,
+      100,
+      100
+    ],
+    "weapon": "AK-12",
+    "v_recoil": 0.42,
+    "h_recoil": 0.11
+  },
+  "iq": {
+    "name": "IQ",
+    "color": [
+      50,
+      150,
+      200
+    ],
+    "weapon": "552 Commando",
+    "v_recoil": 0.36,
+    "h_recoil": 0.09
+  },
+  "buck": {
+    "name": "Buck",
+    "color": [
+      100,
+      180,
+      50
+    ],
+    "weapon": "C8-SFW",
+    "v_recoil": 0.38,
+    "h_recoil": 0.1
+  },
+  "blackbeard": {
+    "name": "Blackbeard",
+    "color": [
+      80,
+      80,
+      80
+    ],
+    "weapon": "MK17",
+    "v_recoil": 0.22,
+    "h_recoil": 0.04
+  },
+  "jackal": {
+    "name": "Jackal",
+    "color": [
+      180,
+      50,
+      180
+    ],
+    "weapon": "C7E",
+    "v_recoil": 0.34,
+    "h_recoil": 0.08
+  },
+  "ying": {
+    "name": "Ying",
+    "color": [
+      200,
+      100,
+      200
+    ],
+    "weapon": "T-95",
+    "v_recoil": 0.36,
+    "h_recoil": 0.09
+  },
+  "zofia": {
+    "name": "Zofia",
+    "color": [
+      150,
+      100,
+      50
+    ],
+    "weapon": "M762",
+    "v_recoil": 0.4,
+    "h_recoil": 0.11
+  },
+  "dokkaebi": {
+    "name": "Dokkaebi",
+    "color": [
+      100,
+      50,
+      150
+    ],
+    "weapon": "DMR",
+    "v_recoil": 0.2,
+    "h_recoil": 0.03
+  },
+  "lion": {
+    "name": "Lion",
+    "color": [
+      50,
+      100,
+      200
+    ],
+    "weapon": "V308",
+    "v_recoil": 0.38,
+    "h_recoil": 0.1
+  },
+  "finka": {
+    "name": "Finka",
+    "color": [
+      50,
+      200,
+      200
+    ],
+    "weapon": "Spear .308",
+    "v_recoil": 0.35,
+    "h_recoil": 0.08
+  },
+  "maverick": {
+    "name": "Maverick",
+    "color": [
+      180,
+      120,
+      50
+    ],
+    "weapon": "AR-15.50",
+    "v_recoil": 0.18,
+    "h_recoil": 0.03
+  },
+  "nomad": {
+    "name": "Nomad",
+    "color": [
+      200,
+      150,
+      50
+    ],
+    "weapon": "AK-74M",
+    "v_recoil": 0.32,
+    "h_recoil": 0.08
+  },
+  "gridlock": {
+    "name": "Gridlock",
+    "color": [
+      100,
+      150,
+      100
+    ],
+    "weapon": "F90",
+    "v_recoil": 0.34,
+    "h_recoil": 0.09
+  },
+  "ace": {
+    "name": "Ace",
+    "color": [
+      50,
+      180,
+      150
+    ],
+    "weapon": "AK-12",
+    "v_recoil": 0.42,
+    "h_recoil": 0.11
+  },
+  "flores": {
+    "name": "Flores",
+    "color": [
+      180,
+      50,
+      50
+    ],
+    "weapon": "AR33",
+    "v_recoil": 0.32,
+    "h_recoil": 0.09
+  },
+  "zero": {
+    "name": "Zero",
+    "color": [
+      50,
+      50,
+      100
+    ],
+    "weapon": "SC3000K",
+    "v_recoil": 0.3,
+    "h_recoil": 0.07
+  },
+  "sens": {
+    "name": "Sens",
+    "color": [
+      100,
+      200,
+      100
+    ],
+    "weapon": "R4-0",
+    "v_recoil": 0.36,
+    "h_recoil": 0.1
+  },
+  "ram": {
+    "name": "Ram",
+    "color": [
+      150,
+      50,
+      50
+    ],
+    "weapon": "R4-C",
+    "v_recoil": 0.35,
+    "h_recoil": 0.08
+  },
+  "deimos": {
+    "name": "Deimos",
+    "color": [
+      80,
+      50,
+      80
+    ],
+    "weapon": "AK-74M",
+    "v_recoil": 0.32,
+    "h_recoil": 0.08
+  },
+  "osa": {
+    "name": "Osa",
+    "color": [
+      100,
+      150,
+      200
+    ],
+    "weapon": "556XI",
+    "v_recoil": 0.4,
+    "h_recoil": 0.1
+  },
+  "grim": {
+    "name": "Grim",
+    "color": [
+      50,
+      100,
+      50
+    ],
+    "weapon": "552 Commando",
+    "v_recoil": 0.36,
+    "h_recoil": 0.09
+  },
+  "brava": {
+    "name": "Brava",
+    "color": [
+      200,
+      100,
+      50
+    ],
+    "weapon": "CAMR",
+    "v_recoil": 0.22,
+    "h_recoil": 0.04
+  },
+  "bandit": {
+    "name": "Bandit",
+    "color": [
+      50,
+      50,
+      200
+    ],
+    "weapon": "MP7",
+    "v_recoil": 0.3,
+    "h_recoil": 0.08
+  },
+  "jager": {
+    "name": "Jager",
+    "color": [
+      50,
+      150,
+      50
+    ],
+    "weapon": "416-C",
+    "v_recoil": 0.38,
+    "h_recoil": 0.1
+  },
+  "kapkan": {
+    "name": "Kapkan",
+    "color": [
+      200,
+      50,
+      50
+    ],
+    "weapon": "9x19VSN",
+    "v_recoil": 0.28,
+    "h_recoil": 0.07
+  },
+  "tachanka": {
+    "name": "Tachanka",
+    "color": [
+      200,
+      100,
+      50
+    ],
+    "weapon": "DP-27",
+    "v_recoil": 0.45,
+    "h_recoil": 0.12
+  },
+  "mute": {
+    "name": "Mute",
+    "color": [
+      50,
+      50,
+      100
+    ],
+    "weapon": "MP5K",
+    "v_recoil": 0.26,
+    "h_recoil": 0.06
+  },
+  "smoke": {
+    "name": "Smoke",
+    "color": [
+      100,
+      150,
+      50
+    ],
+    "weapon": "SMG-11",
+    "v_recoil": 0.42,
+    "h_recoil": 0.15
+  },
+  "doc": {
+    "name": "Doc",
+    "color": [
+      50,
+      150,
+      150
+    ],
+    "weapon": "MP5",
+    "v_recoil": 0.26,
+    "h_recoil": 0.06
+  },
+  "rook": {
+    "name": "Rook",
+    "color": [
+      100,
+      100,
+      150
+    ],
+    "weapon": "MP5",
+    "v_recoil": 0.26,
+    "h_recoil": 0.06
+  },
+  "caveira": {
+    "name": "Caveira",
+    "color": [
+      50,
+      50,
+      50
+    ],
+    "weapon": "M12",
+    "v_recoil": 0.24,
+    "h_recoil": 0.05
+  },
+  "pulse": {
+    "name": "Pulse",
+    "color": [
+      200,
+      50,
+      50
+    ],
+    "weapon": "UMP45",
+    "v_recoil": 0.22,
+    "h_recoil": 0.04
+  },
+  "frost": {
+    "name": "Frost",
+    "color": [
+      100,
+      150,
+      100
+    ],
+    "weapon": "9mm C1",
+    "v_recoil": 0.24,
+    "h_recoil": 0.05
+  },
+  "valkyrie": {
+    "name": "Valkyrie",
+    "color": [
+      50,
+      100,
+      200
+    ],
+    "weapon": "MPX",
+    "v_recoil": 0.22,
+    "h_recoil": 0.04
+  },
+  "ela": {
+    "name": "Ela",
+    "color": [
+      150,
+      50,
+      150
+    ],
+    "weapon": "Scorpion",
+    "v_recoil": 0.48,
+    "h_recoil": 0.18
+  },
+  "lesion": {
+    "name": "Lesion",
+    "color": [
+      50,
+      200,
+      100
+    ],
+    "weapon": "T-5 SMG",
+    "v_recoil": 0.28,
+    "h_recoil": 0.07
+  },
+  "vigil": {
+    "name": "Vigil",
+    "color": [
+      50,
+      50,
+      80
+    ],
+    "weapon": "K1A",
+    "v_recoil": 0.3,
+    "h_recoil": 0.08
+  },
+  "maestro": {
+    "name": "Maestro",
+    "color": [
+      100,
+      100,
+      50
+    ],
+    "weapon": "ALDA 5.56",
+    "v_recoil": 0.4,
+    "h_recoil": 0.1
+  },
+  "alibi": {
+    "name": "Alibi",
+    "color": [
+      50,
+      150,
+      100
+    ],
+    "weapon": "MX4 Storm",
+    "v_recoil": 0.28,
+    "h_recoil": 0.07
+  },
+  "kaid": {
+    "name": "Kaid",
+    "color": [
+      150,
+      100,
+      50
+    ],
+    "weapon": "TCSG12",
+    "v_recoil": 0.2,
+    "h_recoil": 0.03
+  },
+  "mozzie": {
+    "name": "Mozzie",
+    "color": [
+      200,
+      150,
+      50
+    ],
+    "weapon": "P10 Roni",
+    "v_recoil": 0.22,
+    "h_recoil": 0.05
+  },
+  "wamai": {
+    "name": "Wamai",
+    "color": [
+      50,
+      100,
+      150
+    ],
+    "weapon": "AUG A2",
+    "v_recoil": 0.32,
+    "h_recoil": 0.08
+  },
+  "aruni": {
+    "name": "Aruni",
+    "color": [
+      150,
+      50,
+      100
+    ],
+    "weapon": "P10 Roni",
+    "v_recoil": 0.22,
+    "h_recoil": 0.05
+  },
+  "melusi": {
+    "name": "Melusi",
+    "color": [
+      100,
+      50,
+      150
+    ],
+    "weapon": "MP5",
+    "v_recoil": 0.26,
+    "h_recoil": 0.06
+  },
+  "thunderbird": {
+    "name": "Thunderbird",
+    "color": [
+      50,
+      180,
+      180
+    ],
+    "weapon": "Spear .308",
+    "v_recoil": 0.35,
+    "h_recoil": 0.08
+  },
+  "castle": {
+    "name": "Castle",
+    "color": [
+      100,
+      100,
+      100
+    ],
+    "weapon": "UMP45",
+    "v_recoil": 0.22,
+    "h_recoil": 0.04
+  },
+  "echo": {
+    "name": "Echo",
+    "color": [
+      50,
+      50,
+      150
+    ],
+    "weapon": "MP5",
+    "v_recoil": 0.26,
+    "h_recoil": 0.06
+  },
+  "mira": {
+    "name": "Mira",
+    "color": [
+      150,
+      50,
+      50
+    ],
+    "weapon": "Vector .45",
+    "v_recoil": 0.32,
+    "h_recoil": 0.12
+  },
+  "oryx": {
+    "name": "Oryx",
+    "color": [
+      100,
+      150,
+      50
+    ],
+    "weapon": "MP5",
+    "v_recoil": 0.26,
+    "h_recoil": 0.06
+  },
+  "goyo": {
+    "name": "Goyo",
+    "color": [
+      200,
+      100,
+      50
+    ],
+    "weapon": "Vector .45",
+    "v_recoil": 0.32,
+    "h_recoil": 0.12
+  },
+  "warden": {
+    "name": "Warden",
+    "color": [
+      50,
+      100,
+      100
+    ],
+    "weapon": "MP5",
+    "v_recoil": 0.26,
+    "h_recoil": 0.06
+  },
+  "azami": {
+    "name": "Azami",
+    "color": [
+      150,
+      50,
+      100
+    ],
+    "weapon": "9x19VSN",
+    "v_recoil": 0.28,
+    "h_recoil": 0.07
+  },
+  "fenrir": {
+    "name": "Fenrir",
+    "color": [
+      80,
+      50,
+      80
+    ],
+    "weapon": "MP5",
+    "v_recoil": 0.26,
+    "h_recoil": 0.06
+  },
+  "solis": {
+    "name": "Solis",
+    "color": [
+      50,
+      150,
+      50
+    ],
+    "weapon": "P10 Roni",
+    "v_recoil": 0.22,
+    "h_recoil": 0.05
+  },
+  "thorn": {
+    "name": "Thorn",
+    "color": [
+      200,
+      50,
+      100
+    ],
+    "weapon": "UZK50GI",
+    "v_recoil": 0.34,
+    "h_recoil": 0.09
+  },
+  "tubarao": {
+    "name": "Tubarao",
+    "color": [
+      50,
+      100,
+      150
+    ],
+    "weapon": "AR-15.50",
+    "v_recoil": 0.18,
+    "h_recoil": 0.03
+  }
+}

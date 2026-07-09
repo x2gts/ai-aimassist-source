@@ -76,7 +76,7 @@ public:
 
 	bool move(int x = 0, int y = 0) {
 		InjectedInputMouseInfo temp = {};
-		temp.mouse_options;
+		temp.mouse_options = InjectedInputMouseOptions::move;
 		temp.move_direction_x = x;
 		temp.move_direction_y = y;
 		return InjectMouseInputSpoofFunction(&temp, 1);

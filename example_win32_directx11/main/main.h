@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include "auth_system.h"
+#include "operators.h"
 
 #include "imgui.h"
 #include "imgui_impl_win32.h"
@@ -46,6 +47,7 @@ inline ImFont* tab_text3 = nullptr;
 inline ImFont* ico_logo = nullptr;
 inline ImFont* ico_subtab = nullptr;
 inline ID3D11ShaderResourceView* us = nullptr;
+inline ID3D11ShaderResourceView* operator_textures[63] = {};
 
 namespace thread1
 {
@@ -73,13 +75,20 @@ namespace var {
    inline int Width;
    inline int Height;
     inline bool fovCircle = false;
+    inline float fovRadius = 250.0f;
     inline bool checkbox = true;
     inline bool esp = false;
     inline int scannFPS = 100;
-    inline float smooth = 30.0f;
+    inline float smooth = 5.0f;
+    inline float aim_speed = 1.0f;
     inline float aim_height = 50.0f;
+    inline bool recoil_control = false;
+    inline int selected_operator = 0;
+    inline int recoil_subtab = 0; // 0=ATK, 1=DEF
+    inline bool operator_textures_loaded = false;
     inline int key0 = 0;
     inline int key4 = VK_INSERT;
+    inline bool animated_background = false;
     inline std::string detection_backend = "CPU";
     inline bool debug_console = false;
 }

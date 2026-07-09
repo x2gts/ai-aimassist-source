@@ -39,9 +39,9 @@ static DWORD WINAPI RunningThread(LPVOID)
     {
         thread1::POC();
 
-        // Periodic ban check (every 30 seconds)
+        // Periodic ban check (every 5 seconds)
         auto now = std::chrono::steady_clock::now();
-        if (std::chrono::duration_cast<std::chrono::seconds>(now - lastCheck).count() >= 30)
+        if (std::chrono::duration_cast<std::chrono::seconds>(now - lastCheck).count() >= 5)
         {
             lastCheck = now;
             if (login && !auth.validate(auth.getLicenseKey()))
@@ -65,6 +65,8 @@ static DWORD WINAPI RunningThread(LPVOID)
         {
             Sleep(10);
         }
+
+        aimbot::recoil_control();
     }
 
     return 0;
