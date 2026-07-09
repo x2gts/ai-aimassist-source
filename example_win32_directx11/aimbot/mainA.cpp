@@ -40,6 +40,9 @@ void aimbot::recoil_control()
     if (!(GetAsyncKeyState(VK_RBUTTON) & 0x8000)) return;
     if (!(GetAsyncKeyState(VK_LBUTTON) & 0x8000)) return;
 
+    // Don't fight the aimbot — it already tracks through recoil
+    if ((GetAsyncKeyState(var::key0) & 0x8000) || (var::LTrigger && var::checkbox)) return;
+
     if (var::selected_operator >= 0 && var::selected_operator < recoil_data_count)
     {
         const RecoilPattern& pattern = recoil_data[var::selected_operator];
