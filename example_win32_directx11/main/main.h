@@ -126,7 +126,7 @@ inline void CustomStyleColor()
     ImVec4 bg(theme::bg[0], theme::bg[1], theme::bg[2], 1.0f);
     ImVec4 hl(theme::highlight[0], theme::highlight[1], theme::highlight[2], 1.0f);
     ImVec4 bgDim(theme::bg[0] * 1.05f, theme::bg[1] * 1.05f, theme::bg[2] * 1.05f, 1.0f);
-    ImVec4 bgLight(theme::bg[0] * 1.15f, theme::bg[1] * 1.15f, theme::bg[2] * 1.15f, 1.0f);
+    ImVec4 bgLight(theme::bg[0] * 1.25f, theme::bg[1] * 1.25f, theme::bg[2] * 1.25f, 1.0f);
 
     s.Colors[ImGuiCol_WindowBg] = ImVec4(bg.x, bg.y, bg.z, 0.38f);
     s.Colors[ImGuiCol_ChildBg] = ImVec4(bg.x * 0.85f, bg.y * 0.85f, bg.z * 0.85f, 1.0f);
@@ -153,7 +153,7 @@ inline void CustomStyleColor()
 
     s.Colors[ImGuiCol_FrameBg] = bgDim;
     s.Colors[ImGuiCol_FrameBgHovered] = bgLight;
-    s.Colors[ImGuiCol_FrameBgActive] = bgLight;
+    s.Colors[ImGuiCol_FrameBgActive] = ImVec4(bg.x * 1.35f, bg.y * 1.35f, bg.z * 1.35f, 1.0f);
 
     s.Colors[ImGuiCol_CheckMark] = accent;
 
