@@ -241,7 +241,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 
-        if (var::esp)
+        if (var::esp && var::Width > 0 && var::Height > 0)
         {
             ImGui::GetBackgroundDrawList()->AddRect(
                 ImVec2((float)var::boxX, (float)var::boxY),
@@ -292,33 +292,33 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(0.0f + p.x, 0.0f + p.y), ImVec2(855.0f * dpi_scale + p.x, 650.0f * dpi_scale + p.y), ImGui::GetColorU32(colors::main_color), s.WindowRounding);
                 
                 ImGui::SetCursorPos(ImVec2(227.5f * dpi_scale, 30.0f * dpi_scale));
-                ImGui::BeginChild("LoginWindow", ImVec2(400.0f * dpi_scale, 550.0f * dpi_scale), true);
+                ImGui::BeginChild("LoginWindow", ImVec2(400.0f * dpi_scale, 520.0f * dpi_scale), true);
                 {
                     float cw = 400.0f * dpi_scale;
                     float pad = 30.0f * dpi_scale;
                     float inner_w = cw - pad * 2.0f;
 
-                    ImGui::SetCursorPos(ImVec2((cw - ImGui::CalcTextSize("License Activation").x) / 2.0f, 25.0f * dpi_scale));
+                    ImGui::SetCursorPos(ImVec2((cw - ImGui::CalcTextSize("License Activation").x) / 2.0f, 30.0f * dpi_scale));
                     ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "License Activation");
 
-                    ImGui::SetCursorPos(ImVec2(pad, 80.0f * dpi_scale));
+                    ImGui::SetCursorPos(ImVec2(pad, 90.0f * dpi_scale));
                     ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "License Key:");
 
-                    ImGui::SetCursorPos(ImVec2(pad, 105.0f * dpi_scale));
+                    ImGui::SetCursorPos(ImVec2(pad, 115.0f * dpi_scale));
                     ImGui::PushItemWidth(inner_w);
                     ImGui::InputText("##license_key", login_key, IM_ARRAYSIZE(login_key));
                     ImGui::PopItemWidth();
 
-                    ImGui::SetCursorPos(ImVec2(pad, 150.0f * dpi_scale));
+                    ImGui::SetCursorPos(ImVec2(pad, 170.0f * dpi_scale));
                     ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "HWID: %s", auth.getHWID().c_str());
 
-                    ImGui::SetCursorPos(ImVec2(pad, 190.0f * dpi_scale));
+                    ImGui::SetCursorPos(ImVec2(pad, 210.0f * dpi_scale));
                     if (strlen(login_error_message) > 0)
                     {
                         ImGui::TextColored(ImVec4(0.9f, 0.3f, 0.3f, 1.0f), "%s", login_error_message);
                     }
 
-                    ImGui::SetCursorPos(ImVec2((cw - 160.0f * dpi_scale) / 2.0f, 250.0f * dpi_scale));
+                    ImGui::SetCursorPos(ImVec2((cw - 160.0f * dpi_scale) / 2.0f, 270.0f * dpi_scale));
                     if (ImGui::Button("Activate", ImVec2(160.0f * dpi_scale, 40.0f * dpi_scale)))
                     {
                         if (strlen(login_key) < 10) {
@@ -336,12 +336,12 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         }
                     }
 
-                    ImGui::SetCursorPos(ImVec2((cw - ImGui::CalcTextSize("Subscription: None").x) / 2.0f, 330.0f * dpi_scale));
+                    ImGui::SetCursorPos(ImVec2((cw - ImGui::CalcTextSize("Subscription: None").x) / 2.0f, 350.0f * dpi_scale));
                     ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "Subscription: %s",
                         auth.isValid() ? auth.getSubscription().c_str() : "None");
                     if (auth.isValid() && auth.getExpiresAt() != "never") {
                         auto exp_text = "Expires: " + auth.getExpiresAt();
-                        ImGui::SetCursorPos(ImVec2((cw - ImGui::CalcTextSize(exp_text.c_str()).x) / 2.0f, 355.0f * dpi_scale));
+                        ImGui::SetCursorPos(ImVec2((cw - ImGui::CalcTextSize(exp_text.c_str()).x) / 2.0f, 380.0f * dpi_scale));
                         ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "Expires: %s",
                             auth.getExpiresAt().c_str());
                     }
