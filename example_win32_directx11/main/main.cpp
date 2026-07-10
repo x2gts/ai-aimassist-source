@@ -465,7 +465,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                     ImGui::BeginChildPos("", ImVec2(620.0f * dpi_scale, 100.0f * dpi_scale));
                     {
                         ImGui::GetForegroundDrawList()->AddText(tab_text3, 26.0f * dpi_scale, ImVec2(450.0f * dpi_scale + p.x, 55.0f * dpi_scale + p.y), ImColor(255, 255, 255, 255), "Recoil Control");
-                        ImGui::GetForegroundDrawList()->AddText(tab_text3, 16.0f * dpi_scale, ImVec2(390.0f * dpi_scale + p.x, 85.0f * dpi_scale + p.y), ImColor(255, 255, 255, 255), "Configure sensitivity and attachments for recoil compensation");
+                        ImGui::GetForegroundDrawList()->AddText(tab_text3, 16.0f * dpi_scale, ImVec2(390.0f * dpi_scale + p.x, 85.0f * dpi_scale + p.y), ImColor(255, 255, 255, 255), "Configure sensitivity and attachments");
                     }
                     ImGui::EndChild();
 
@@ -512,182 +512,162 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         ImGui::SetWindowFontScale(dpi_scale);
 
                         ImGui::Checkbox("Recoil control", &var::recoil_control);
+                        ImGui::Spacing();
+
+                        if (!var::operator_textures_loaded)
+                        {
+                            for (int i = 0; i < 63; i++)
+                            {
+                                D3DX11CreateShaderResourceViewFromMemory(
+                                    g_pd3dDevice,
+                                    operator_icons[i].data,
+                                    operator_icons[i].size,
+                                    nullptr, nullptr,
+                                    &operator_textures[i], nullptr);
+                            }
+                            var::operator_textures_loaded = true;
+                        }
+
+                        float btn_size = 64.0f * dpi_scale;
+                        float padding = 6.0f * dpi_scale;
+                        float grid_w = 600.0f * dpi_scale;
+                        int cols = (int)((grid_w + padding) / (btn_size + padding));
+                        if (cols < 1) cols = 1;
+
+                        ImGuiStyle& style = ImGui::GetStyle();
+                        ImVec2 old_spacing = style.ItemSpacing;
+                        style.ItemSpacing = ImVec2(padding, padding);
+
+                        const int* order = var::recoil_subtab == 0 ? atk_order : def_order;
+                        int order_count = var::recoil_subtab == 0 ? atk_order_count : def_order_count;
+
+                        int col = 0;
+                        for (int idx = 0; idx < order_count; idx++)
+                        {
+                            int i = order[idx];
+                            bool selected = (var::selected_operator == i);
+
+                            ImGui::PushID(i);
+
+                            ImVec2 btn_pos = ImGui::GetCursorScreenPos();
+
+                            bool clicked = ImGui::InvisibleButton("##opbtn", ImVec2(btn_size, btn_size));
+                            if (clicked)
+                                var::selected_operator = i;
+
+                            ImDrawList* dl = ImGui::GetWindowDrawList();
+                            ImU32 bg_col = ImGui::GetColorU32(selected ? colors::Op_Selected : colors::Op_Normal);
+                            dl->AddRectFilled(btn_pos, ImVec2(btn_pos.x + btn_size, btn_pos.y + btn_size), bg_col, 6.0f);
+
+                            if (operator_textures[i])
+                            {
+                                float pad = 2.0f * dpi_scale;
+                                dl->AddImage(
+                                    (ImTextureID)operator_textures[i],
+                                    ImVec2(btn_pos.x + pad, btn_pos.y + pad),
+                                    ImVec2(btn_pos.x + btn_size - pad, btn_pos.y + btn_size - pad),
+                                    ImVec2(0, 0), ImVec2(1, 1),
+                                    IM_COL32(255, 255, 255, 255));
+                            }
+                            else
+                            {
+                                ImVec2 ts = ImGui::CalcTextSize(recoil_data[i].name);
+                                dl->AddText(
+                                    ImVec2(btn_pos.x + btn_size / 2 - ts.x / 2, btn_pos.y + btn_size / 2 - ts.y / 2),
+                                    IM_COL32(200, 200, 200, 255), recoil_data[i].name);
+                            }
+
+                            if (selected)
+                                dl->AddRect(btn_pos, ImVec2(btn_pos.x + btn_size, btn_pos.y + btn_size),
+                                    ImGui::GetColorU32(colors::Op_Border), 6.0f, 0, 2.0f);
+
+                            ImGui::PopID();
+
+                            col++;
+                            if (col % cols != 0)
+                                ImGui::SameLine();
+                        }
+
+                        style.ItemSpacing = old_spacing;
 
                         ImGui::Spacing();
                         ImGui::Separator();
                         ImGui::Spacing();
 
-                        float left_w = 295.0f * dpi_scale;
-                        float right_w = 315.0f * dpi_scale;
-
-                        ImGui::BeginChild("##op_grid", ImVec2(left_w, 340.0f * dpi_scale), false);
-                        {
-                            ImGui::SetWindowFontScale(dpi_scale);
-
-                            float btn_size = 64.0f * dpi_scale;
-                            float padding = 6.0f * dpi_scale;
-                            float avail_w = left_w - 10.0f * dpi_scale;
-                            int cols = (int)((avail_w + padding) / (btn_size + padding));
-                            if (cols < 1) cols = 1;
-
-                            ImGuiStyle& style = ImGui::GetStyle();
-                            ImVec2 old_spacing = style.ItemSpacing;
-                            style.ItemSpacing = ImVec2(padding, padding);
-
-                            if (!var::operator_textures_loaded)
-                            {
-                                for (int i = 0; i < 63; i++)
-                                {
-                                    D3DX11CreateShaderResourceViewFromMemory(
-                                        g_pd3dDevice,
-                                        operator_icons[i].data,
-                                        operator_icons[i].size,
-                                        nullptr, nullptr,
-                                        &operator_textures[i], nullptr);
-                                }
-                                var::operator_textures_loaded = true;
-                            }
-
-                            const int* order = var::recoil_subtab == 0 ? atk_order : def_order;
-                            int order_count = var::recoil_subtab == 0 ? atk_order_count : def_order_count;
-
-                            int col = 0;
-                            for (int idx = 0; idx < order_count; idx++)
-                            {
-                                int i = order[idx];
-                                bool selected = (var::selected_operator == i);
-
-                                ImGui::PushID(i);
-
-                                ImVec2 btn_pos = ImGui::GetCursorScreenPos();
-                                ImVec2 btn_size2 = ImVec2(btn_size, btn_size);
-
-                                bool clicked = ImGui::InvisibleButton("##opbtn", btn_size2);
-                                if (clicked)
-                                    var::selected_operator = i;
-
-                                ImDrawList* dl = ImGui::GetWindowDrawList();
-
-                                ImU32 bg_col = ImGui::GetColorU32(selected ? colors::Op_Selected : colors::Op_Normal);
-                                dl->AddRectFilled(btn_pos, ImVec2(btn_pos.x + btn_size, btn_pos.y + btn_size), bg_col, 6.0f);
-
-                                if (operator_textures[i])
-                                {
-                                    float pad = 2.0f * dpi_scale;
-                                    dl->AddImage(
-                                        (ImTextureID)operator_textures[i],
-                                        ImVec2(btn_pos.x + pad, btn_pos.y + pad),
-                                        ImVec2(btn_pos.x + btn_size - pad, btn_pos.y + btn_size - pad),
-                                        ImVec2(0, 0), ImVec2(1, 1),
-                                        IM_COL32(255, 255, 255, 255));
-                                }
-                                else
-                                {
-                                    ImVec2 ts = ImGui::CalcTextSize(recoil_data[i].name);
-                                    dl->AddText(
-                                        ImVec2(btn_pos.x + btn_size / 2 - ts.x / 2, btn_pos.y + btn_size / 2 - ts.y / 2),
-                                        IM_COL32(200, 200, 200, 255), recoil_data[i].name);
-                                }
-
-                                if (selected)
-                                {
-                                    dl->AddRect(btn_pos, ImVec2(btn_pos.x + btn_size, btn_pos.y + btn_size),
-                                        ImGui::GetColorU32(colors::Op_Border), 6.0f, 0, 2.0f);
-                                }
-
-                                ImGui::PopID();
-
-                                col++;
-                                if (col % cols != 0)
-                                    ImGui::SameLine();
-                            }
-
-                            style.ItemSpacing = old_spacing;
-                        }
-                        ImGui::EndChild();
-
+                        ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "%s", recoil_data[var::selected_operator].name);
                         ImGui::SameLine();
+                        ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), " - %s", recoil_data[var::selected_operator].weapon);
 
-                        ImGui::BeginChild("##recoil_cfg", ImVec2(right_w, 430.0f * dpi_scale), false);
+                        ImGui::Spacing();
+                        ImGui::Separator();
+                        ImGui::Spacing();
+
+                        const char* cfg_tabs[] = { "Sights", "Barrel", "Grip" };
+                        float cfg_tab_w = 190.0f * dpi_scale;
+                        for (int t = 0; t < 3; t++)
                         {
-                            ImGui::SetWindowFontScale(dpi_scale);
-
-                            ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "%s", recoil_data[var::selected_operator].name);
-                            ImGui::SameLine();
-                            ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), " - %s", recoil_data[var::selected_operator].weapon);
-
-                            ImGui::Spacing();
-                            ImGui::Separator();
-                            ImGui::Spacing();
-
-                            const char* cfg_tabs[] = { "Sights", "Barrel", "Grip" };
-                            float cfg_tab_w = (right_w - 30.0f * dpi_scale) / 3.0f;
-                            for (int t = 0; t < 3; t++)
+                            if (t > 0) ImGui::SameLine();
+                            bool active = (var::recoil_config_tab == t);
+                            if (!active)
                             {
-                                if (t > 0) ImGui::SameLine();
-                                bool active = (var::recoil_config_tab == t);
-                                if (!active)
-                                {
-                                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(theme::bg[0] * 0.85f, theme::bg[1] * 0.85f, theme::bg[2] * 0.85f, 1.0f));
-                                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(theme::bg[0] * 1.05f, theme::bg[1] * 1.05f, theme::bg[2] * 1.05f, 1.0f));
-                                }
-                                else
-                                {
-                                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(theme::accent[0], theme::accent[1], theme::accent[2], 1.0f));
-                                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(theme::accent[0], theme::accent[1], theme::accent[2], 1.0f));
-                                }
-                                if (ImGui::Button(cfg_tabs[t], ImVec2(cfg_tab_w, 25.0f * dpi_scale)))
-                                    var::recoil_config_tab = t;
-                                ImGui::PopStyleColor(2);
+                                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(theme::bg[0] * 0.85f, theme::bg[1] * 0.85f, theme::bg[2] * 0.85f, 1.0f));
+                                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(theme::bg[0] * 1.05f, theme::bg[1] * 1.05f, theme::bg[2] * 1.05f, 1.0f));
                             }
-
-                            ImGui::Spacing();
-                            ImGui::Separator();
-                            ImGui::Spacing();
-
-                            ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Sensitivity");
-                            ImGui::PushItemWidth(-20.0f);
-                            ImGui::SliderFloat("##sens_h", &var::sensitivity_h, 1.0f, 100.0f, "H: %.0f");
-                            ImGui::SliderFloat("##sens_v", &var::sensitivity_v, 1.0f, 100.0f, "V: %.0f");
-                            ImGui::SliderFloat("##ads_sens", &var::ads_sensitivity, 1.0f, 100.0f, "ADS: %.0f");
-                            ImGui::PopItemWidth();
-
-                            ImGui::Spacing();
-                            ImGui::Separator();
-                            ImGui::Spacing();
-
-                            if (var::recoil_config_tab == 0)
+                            else
                             {
-                                ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Sight");
-                                ImGui::PushItemWidth(-20.0f);
-                                ImGui::Combo("##sight", &var::selected_sight, sight_names, SIGHT_COUNT);
-                                ImGui::PopItemWidth();
-                                ImGui::Spacing();
-                                ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "ADS Mult: %.2fx", sight_ads_mult[var::selected_sight]);
-                                ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Recoil Mod: %.0f%%", sight_recoil_mod[var::selected_sight] * 100.0f);
+                                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(theme::accent[0], theme::accent[1], theme::accent[2], 1.0f));
+                                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(theme::accent[0], theme::accent[1], theme::accent[2], 1.0f));
                             }
-                            else if (var::recoil_config_tab == 1)
-                            {
-                                ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Barrel");
-                                ImGui::PushItemWidth(-20.0f);
-                                ImGui::Combo("##barrel", &var::selected_barrel, barrel_names, BARREL_COUNT);
-                                ImGui::PopItemWidth();
-                                ImGui::Spacing();
-                                ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Vertical: %.0f%%", barrel_vert_mod[var::selected_barrel] * 100.0f);
-                                ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Horizontal: %.0f%%", barrel_horz_mod[var::selected_barrel] * 100.0f);
-                            }
-                            else if (var::recoil_config_tab == 2)
-                            {
-                                ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Grip");
-                                ImGui::PushItemWidth(-20.0f);
-                                ImGui::Combo("##grip", &var::selected_grip, grip_names, GRIP_COUNT);
-                                ImGui::PopItemWidth();
-                                ImGui::Spacing();
-                                ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Vertical: %.0f%%", grip_vert_mod[var::selected_grip] * 100.0f);
-                                ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Horizontal: %.0f%%", grip_horz_mod[var::selected_grip] * 100.0f);
-                            }
+                            if (ImGui::Button(cfg_tabs[t], ImVec2(cfg_tab_w, 28.0f * dpi_scale)))
+                                var::recoil_config_tab = t;
+                            ImGui::PopStyleColor(2);
                         }
-                        ImGui::EndChild();
+
+                        ImGui::Spacing();
+                        ImGui::Separator();
+                        ImGui::Spacing();
+
+                        ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Sensitivity");
+                        ImGui::PushItemWidth(580.0f * dpi_scale);
+                        ImGui::SliderFloat("##sens_h", &var::sensitivity_h, 1.0f, 100.0f, "%.0f");
+                        ImGui::SliderFloat("##sens_v", &var::sensitivity_v, 1.0f, 100.0f, "%.0f");
+                        ImGui::SliderFloat("##ads_sens", &var::ads_sensitivity, 1.0f, 100.0f, "%.0f");
+                        ImGui::PopItemWidth();
+
+                        ImGui::Spacing();
+                        ImGui::Separator();
+                        ImGui::Spacing();
+
+                        if (var::recoil_config_tab == 0)
+                        {
+                            ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Sight");
+                            ImGui::PushItemWidth(580.0f * dpi_scale);
+                            ImGui::Combo("##sight", &var::selected_sight, sight_names, SIGHT_COUNT);
+                            ImGui::PopItemWidth();
+                            ImGui::Spacing();
+                            ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "ADS Mult: %.2fx", sight_ads_mult[var::selected_sight]);
+                            ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Recoil Mod: %.0f%%", sight_recoil_mod[var::selected_sight] * 100.0f);
+                        }
+                        else if (var::recoil_config_tab == 1)
+                        {
+                            ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Barrel");
+                            ImGui::PushItemWidth(580.0f * dpi_scale);
+                            ImGui::Combo("##barrel", &var::selected_barrel, barrel_names, BARREL_COUNT);
+                            ImGui::PopItemWidth();
+                            ImGui::Spacing();
+                            ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Vertical: %.0f%%", barrel_vert_mod[var::selected_barrel] * 100.0f);
+                            ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Horizontal: %.0f%%", barrel_horz_mod[var::selected_barrel] * 100.0f);
+                        }
+                        else if (var::recoil_config_tab == 2)
+                        {
+                            ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Grip");
+                            ImGui::PushItemWidth(580.0f * dpi_scale);
+                            ImGui::Combo("##grip", &var::selected_grip, grip_names, GRIP_COUNT);
+                            ImGui::PopItemWidth();
+                            ImGui::Spacing();
+                            ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Vertical: %.0f%%", grip_vert_mod[var::selected_grip] * 100.0f);
+                            ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Horizontal: %.0f%%", grip_horz_mod[var::selected_grip] * 100.0f);
+                        }
                     }
                     ImGui::EndChild();
                     ImGui::PopStyleColor();
