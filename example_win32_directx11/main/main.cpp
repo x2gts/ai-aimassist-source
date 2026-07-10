@@ -615,7 +615,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                             snprintf(val_buf, sizeof(val_buf), "%.0f", *value);
                             ImVec2 label_size = ImGui::CalcTextSize(label);
                             ImVec2 val_size = ImGui::CalcTextSize(val_buf);
-                            float slider_w = 580.0f * dpi_scale;
+                            float slider_w = 560.0f * dpi_scale;
                             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (slider_w - label_size.x) / 2.0f);
                             ImGui::TextColored(ImVec4(0.8f, 0.8f, 0.8f, 1.0f), "%s", label);
                             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (slider_w - val_size.x) / 2.0f - (label_size.x - val_size.x) / 2.0f);
@@ -738,22 +738,23 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                     {
                         ImGui::SetWindowFontScale(dpi_scale);
                         ImGui::Checkbox("Render animated background", &var::animated_background);
+
+                        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(theme::highlight[0], theme::highlight[1], theme::highlight[2], 1.0f));
+                        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(theme::highlight[0] * 1.15f, theme::highlight[1] * 1.15f, theme::highlight[2] * 1.15f, 1.0f));
+                        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(theme::highlight[0] * 1.15f, theme::highlight[1] * 1.15f, theme::highlight[2] * 1.15f, 1.0f));
                         ImGui::Keybind("Hide menu", &var::key4, true);
+                        ImGui::PopStyleColor(3);
                         
                         ImGui::Spacing();
                         ImGui::Separator();
                         ImGui::Spacing();
                         ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Theme");
 
-                        ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(theme::accent[0] * 0.3f, theme::accent[1] * 0.3f, theme::accent[2] * 0.3f, 1.0f));
-                        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(theme::accent[0] * 0.4f, theme::accent[1] * 0.4f, theme::accent[2] * 0.4f, 1.0f));
-                        ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(theme::accent[0] * 0.5f, theme::accent[1] * 0.5f, theme::accent[2] * 0.5f, 1.0f));
                         ImGui::PushItemWidth(300.0f * dpi_scale);
                         ImGui::ColorEdit3("Accent##theme", theme::accent, ImGuiColorEditFlags_NoAlpha);
                         ImGui::ColorEdit3("Background##theme", theme::bg, ImGuiColorEditFlags_NoAlpha);
                         ImGui::ColorEdit3("Highlight##theme", theme::highlight, ImGuiColorEditFlags_NoAlpha);
                         ImGui::PopItemWidth();
-                        ImGui::PopStyleColor(3);
                         
                         ImGui::Spacing();
                         ImGui::Separator();

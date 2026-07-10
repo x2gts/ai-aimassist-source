@@ -125,8 +125,8 @@ inline void CustomStyleColor()
     ImVec4 accent(theme::accent[0], theme::accent[1], theme::accent[2], 1.0f);
     ImVec4 bg(theme::bg[0], theme::bg[1], theme::bg[2], 1.0f);
     ImVec4 hl(theme::highlight[0], theme::highlight[1], theme::highlight[2], 1.0f);
-    ImVec4 bgDim(theme::bg[0] * 0.8f, theme::bg[1] * 0.8f, theme::bg[2] * 0.8f, 1.0f);
-    ImVec4 bgLight(theme::bg[0] * 1.2f, theme::bg[1] * 1.2f, theme::bg[2] * 1.2f, 1.0f);
+    ImVec4 bgDim(theme::bg[0] * 1.05f, theme::bg[1] * 1.05f, theme::bg[2] * 1.05f, 1.0f);
+    ImVec4 bgLight(theme::bg[0] * 1.15f, theme::bg[1] * 1.15f, theme::bg[2] * 1.15f, 1.0f);
 
     s.Colors[ImGuiCol_WindowBg] = ImVec4(bg.x, bg.y, bg.z, 0.38f);
     s.Colors[ImGuiCol_ChildBg] = ImVec4(bg.x * 0.85f, bg.y * 0.85f, bg.z * 0.85f, 1.0f);
