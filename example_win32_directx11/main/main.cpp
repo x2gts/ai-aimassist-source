@@ -741,15 +741,22 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         ImGui::Spacing();
                         ImGui::Separator();
                         ImGui::Spacing();
-                        ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 0.8f), "Theme");
-                        ImGui::ColorEdit3("Accent", theme::accent, ImGuiColorEditFlags_NoAlpha);
-                        ImGui::ColorEdit3("Background", theme::bg, ImGuiColorEditFlags_NoAlpha);
-                        ImGui::ColorEdit3("Highlight", theme::highlight, ImGuiColorEditFlags_NoAlpha);
+                        ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Theme");
+
+                        ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(theme::accent[0] * 0.3f, theme::accent[1] * 0.3f, theme::accent[2] * 0.3f, 1.0f));
+                        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(theme::accent[0] * 0.4f, theme::accent[1] * 0.4f, theme::accent[2] * 0.4f, 1.0f));
+                        ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(theme::accent[0] * 0.5f, theme::accent[1] * 0.5f, theme::accent[2] * 0.5f, 1.0f));
+                        ImGui::PushItemWidth(300.0f * dpi_scale);
+                        ImGui::ColorEdit3("Accent##theme", theme::accent, ImGuiColorEditFlags_NoAlpha);
+                        ImGui::ColorEdit3("Background##theme", theme::bg, ImGuiColorEditFlags_NoAlpha);
+                        ImGui::ColorEdit3("Highlight##theme", theme::highlight, ImGuiColorEditFlags_NoAlpha);
+                        ImGui::PopItemWidth();
+                        ImGui::PopStyleColor(3);
                         
                         ImGui::Spacing();
                         ImGui::Separator();
                         ImGui::Spacing();
-                        ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 0.8f), "Detection: %s", var::detection_backend.c_str());
+                        ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Detection: %s", var::detection_backend.c_str());
                         
                         ImGui::Spacing();
                         ImGui::Separator();
