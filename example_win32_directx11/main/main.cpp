@@ -602,27 +602,6 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         ImGui::Separator();
                         ImGui::Spacing();
 
-                        const char* cfg_tabs[] = { "Sights", "Barrel", "Grip" };
-                        float cfg_tab_w = 190.0f * dpi_scale;
-                        for (int t = 0; t < 3; t++)
-                        {
-                            if (t > 0) ImGui::SameLine();
-                            bool active = (var::recoil_config_tab == t);
-                            if (!active)
-                            {
-                                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(theme::bg[0] * 0.85f, theme::bg[1] * 0.85f, theme::bg[2] * 0.85f, 1.0f));
-                                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(theme::bg[0] * 1.05f, theme::bg[1] * 1.05f, theme::bg[2] * 1.05f, 1.0f));
-                            }
-                            else
-                            {
-                                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(theme::accent[0], theme::accent[1], theme::accent[2], 1.0f));
-                                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(theme::accent[0], theme::accent[1], theme::accent[2], 1.0f));
-                            }
-                            if (ImGui::Button(cfg_tabs[t], ImVec2(cfg_tab_w, 28.0f * dpi_scale)))
-                                var::recoil_config_tab = t;
-                            ImGui::PopStyleColor(2);
-                        }
-
                         ImGui::Spacing();
                         ImGui::Separator();
                         ImGui::Spacing();
@@ -638,35 +617,78 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         ImGui::Separator();
                         ImGui::Spacing();
 
-                        if (var::recoil_config_tab == 0)
+                        float drop_w = 190.0f * dpi_scale;
+                        ImVec4 btnActive(theme::accent[0], theme::accent[1], theme::accent[2], 1.0f);
+                        ImVec4 btnInactive(theme::bg[0] * 0.85f, theme::bg[1] * 0.85f, theme::bg[2] * 0.85f, 1.0f);
+                        ImVec4 btnHover(theme::bg[0] * 1.05f, theme::bg[1] * 1.05f, theme::bg[2] * 1.05f, 1.0f);
+
                         {
-                            ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Sight");
-                            ImGui::PushItemWidth(580.0f * dpi_scale);
-                            ImGui::Combo("##sight", &var::selected_sight, sight_names, SIGHT_COUNT);
-                            ImGui::PopItemWidth();
-                            ImGui::Spacing();
-                            ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "ADS Mult: %.2fx", sight_ads_mult[var::selected_sight]);
-                            ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Recoil Mod: %.0f%%", sight_recoil_mod[var::selected_sight] * 100.0f);
+                            char sight_label[64];
+                            snprintf(sight_label, sizeof(sight_label), "%s ##sight", sight_names[var::selected_sight]);
+                            ImGui::PushStyleColor(ImGuiCol_Button, btnInactive);
+                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, btnHover);
+                            if (ImGui::Button(sight_label, ImVec2(drop_w, 28.0f * dpi_scale)))
+                                ImGui::OpenPopup("##sight_popup");
+                            ImGui::PopStyleColor(2);
+                            if (ImGui::BeginPopup("##sight_popup"))
+                            {
+                                for (int s = 0; s < SIGHT_COUNT; s++)
+                                {
+                                    bool is_selected = (var::selected_sight == s);
+                                    if (ImGui::Selectable(sight_names[s], is_selected))
+                                        var::selected_sight = s;
+                                }
+                                ImGui::EndPopup();
+                            }
+                            ImGui::SameLine();
+                            ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "ADS: %.2fx  Recoil: %.0f%%",
+                                sight_ads_mult[var::selected_sight], sight_recoil_mod[var::selected_sight] * 100.0f);
                         }
-                        else if (var::recoil_config_tab == 1)
+
                         {
-                            ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Barrel");
-                            ImGui::PushItemWidth(580.0f * dpi_scale);
-                            ImGui::Combo("##barrel", &var::selected_barrel, barrel_names, BARREL_COUNT);
-                            ImGui::PopItemWidth();
-                            ImGui::Spacing();
-                            ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Vertical: %.0f%%", barrel_vert_mod[var::selected_barrel] * 100.0f);
-                            ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Horizontal: %.0f%%", barrel_horz_mod[var::selected_barrel] * 100.0f);
+                            char barrel_label[64];
+                            snprintf(barrel_label, sizeof(barrel_label), "%s ##barrel", barrel_names[var::selected_barrel]);
+                            ImGui::PushStyleColor(ImGuiCol_Button, btnInactive);
+                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, btnHover);
+                            if (ImGui::Button(barrel_label, ImVec2(drop_w, 28.0f * dpi_scale)))
+                                ImGui::OpenPopup("##barrel_popup");
+                            ImGui::PopStyleColor(2);
+                            if (ImGui::BeginPopup("##barrel_popup"))
+                            {
+                                for (int b = 0; b < BARREL_COUNT; b++)
+                                {
+                                    bool is_selected = (var::selected_barrel == b);
+                                    if (ImGui::Selectable(barrel_names[b], is_selected))
+                                        var::selected_barrel = b;
+                                }
+                                ImGui::EndPopup();
+                            }
+                            ImGui::SameLine();
+                            ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "V: %.0f%%  H: %.0f%%",
+                                barrel_vert_mod[var::selected_barrel] * 100.0f, barrel_horz_mod[var::selected_barrel] * 100.0f);
                         }
-                        else if (var::recoil_config_tab == 2)
+
                         {
-                            ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Grip");
-                            ImGui::PushItemWidth(580.0f * dpi_scale);
-                            ImGui::Combo("##grip", &var::selected_grip, grip_names, GRIP_COUNT);
-                            ImGui::PopItemWidth();
-                            ImGui::Spacing();
-                            ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Vertical: %.0f%%", grip_vert_mod[var::selected_grip] * 100.0f);
-                            ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Horizontal: %.0f%%", grip_horz_mod[var::selected_grip] * 100.0f);
+                            char grip_label[64];
+                            snprintf(grip_label, sizeof(grip_label), "%s ##grip", grip_names[var::selected_grip]);
+                            ImGui::PushStyleColor(ImGuiCol_Button, btnInactive);
+                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, btnHover);
+                            if (ImGui::Button(grip_label, ImVec2(drop_w, 28.0f * dpi_scale)))
+                                ImGui::OpenPopup("##grip_popup");
+                            ImGui::PopStyleColor(2);
+                            if (ImGui::BeginPopup("##grip_popup"))
+                            {
+                                for (int g = 0; g < GRIP_COUNT; g++)
+                                {
+                                    bool is_selected = (var::selected_grip == g);
+                                    if (ImGui::Selectable(grip_names[g], is_selected))
+                                        var::selected_grip = g;
+                                }
+                                ImGui::EndPopup();
+                            }
+                            ImGui::SameLine();
+                            ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "V: %.0f%%  H: %.0f%%",
+                                grip_vert_mod[var::selected_grip] * 100.0f, grip_horz_mod[var::selected_grip] * 100.0f);
                         }
                     }
                     ImGui::EndChild();
