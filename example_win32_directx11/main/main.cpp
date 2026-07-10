@@ -294,51 +294,52 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                 ImGui::SetCursorPos(ImVec2(327.5f * dpi_scale, 50.0f * dpi_scale));
                 ImGui::BeginChild("LoginWindow", ImVec2(400.0f * dpi_scale, 550.0f * dpi_scale), true);
                 {
-                    ImGui::SetCursorPos(ImVec2(150.0f * dpi_scale, 20.0f * dpi_scale));
-                    ImGui::Text("License Activation");
-                    
-                    ImGui::SetCursorPos(ImVec2(20.0f * dpi_scale, 60.0f * dpi_scale));
-                    ImGui::BeginChild("LoginContent", ImVec2(360.0f * dpi_scale, 400.0f * dpi_scale), false);
+                    ImGui::SetCursorPos(ImVec2(120.0f * dpi_scale, 30.0f * dpi_scale));
+                    ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "License Activation");
+
+                    ImGui::SetCursorPos(ImVec2(30.0f * dpi_scale, 80.0f * dpi_scale));
+                    ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "License Key:");
+
+                    ImGui::SetCursorPos(ImVec2(30.0f * dpi_scale, 105.0f * dpi_scale));
+                    ImGui::PushItemWidth(340.0f * dpi_scale);
+                    ImGui::InputText("##license_key", login_key, IM_ARRAYSIZE(login_key));
+                    ImGui::PopItemWidth();
+
+                    ImGui::SetCursorPos(ImVec2(30.0f * dpi_scale, 150.0f * dpi_scale));
+                    ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "HWID: %s", auth.getHWID().c_str());
+
+                    ImGui::SetCursorPos(ImVec2(30.0f * dpi_scale, 200.0f * dpi_scale));
+                    if (strlen(login_error_message) > 0)
                     {
-                        ImGui::Text("License Key:");
-                        ImGui::InputText("##license_key", login_key, IM_ARRAYSIZE(login_key));
-                        
-                        ImGui::Spacing();
-                        ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "HWID: %s", auth.getHWID().c_str());
-                        
-                        ImGui::Spacing();
-                        if (strlen(login_error_message) > 0)
-                        {
-                            ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), login_error_message);
+                        ImGui::TextColored(ImVec4(0.9f, 0.3f, 0.3f, 1.0f), "%s", login_error_message);
+                    }
+
+                    ImGui::SetCursorPos(ImVec2(120.0f * dpi_scale, 260.0f * dpi_scale));
+                    if (ImGui::Button("Activate", ImVec2(160.0f * dpi_scale, 40.0f * dpi_scale)))
+                    {
+                        if (strlen(login_key) < 10) {
+                            strcpy_s(login_error_message, "Please enter a valid license key");
                         }
-                        
-                        ImGui::SetCursorPos(ImVec2(100.0f * dpi_scale, 200.0f * dpi_scale));
-                        if (ImGui::Button("Activate", ImVec2(160.0f * dpi_scale, 40.0f * dpi_scale)))
+                        else if (auth.validate(login_key))
                         {
-                            if (strlen(login_key) < 10) {
-                                strcpy_s(login_error_message, "Please enter a valid license key");
-                            }
-                            else if (auth.validate(login_key))
-                            {
-                                login = true;
-                                saveKey(login_key);
-                                strcpy_s(login_error_message, "");
-                            }
-                            else
-                            {
-                                strcpy_s(login_error_message, "Invalid or expired license key");
-                            }
+                            login = true;
+                            saveKey(login_key);
+                            strcpy_s(login_error_message, "");
                         }
-                        
-                        ImGui::SetCursorPos(ImVec2(80.0f * dpi_scale, 280.0f * dpi_scale));
-                        ImGui::TextColored(ImVec4(0.4f, 0.4f, 0.4f, 1.0f), "Subscription: %s", 
-                            auth.isValid() ? auth.getSubscription().c_str() : "None");
-                        if (auth.isValid() && auth.getExpiresAt() != "never") {
-                            ImGui::TextColored(ImVec4(0.4f, 0.4f, 0.4f, 1.0f), "Expires: %s", 
-                                auth.getExpiresAt().c_str());
+                        else
+                        {
+                            strcpy_s(login_error_message, "Invalid or expired license key");
                         }
                     }
-                    ImGui::EndChild();
+
+                    ImGui::SetCursorPos(ImVec2(110.0f * dpi_scale, 340.0f * dpi_scale));
+                    ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "Subscription: %s",
+                        auth.isValid() ? auth.getSubscription().c_str() : "None");
+                    if (auth.isValid() && auth.getExpiresAt() != "never") {
+                        ImGui::SetCursorPos(ImVec2(110.0f * dpi_scale, 365.0f * dpi_scale));
+                        ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "Expires: %s",
+                            auth.getExpiresAt().c_str());
+                    }
                 }
                 ImGui::EndChild();
                 ImGui::End();
