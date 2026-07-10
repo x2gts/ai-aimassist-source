@@ -130,8 +130,8 @@ inline void CustomStyleColor()
     ImVec4 bgActive(bg.x + 0.12f, bg.y + 0.12f, bg.z + 0.12f, 1.0f);
 
     s.Colors[ImGuiCol_WindowBg] = ImVec4(bg.x, bg.y, bg.z, 0.38f);
-    s.Colors[ImGuiCol_ChildBg] = ImVec4(bg.x * 0.85f, bg.y * 0.85f, bg.z * 0.85f, 1.0f);
-    s.Colors[ImGuiCol_PopupBg] = ImVec4(bg.x * 0.85f, bg.y * 0.85f, bg.z * 0.85f, 1.0f);
+    s.Colors[ImGuiCol_ChildBg] = ImVec4(bg.x + 0.02f, bg.y + 0.02f, bg.z + 0.02f, 1.0f);
+    s.Colors[ImGuiCol_PopupBg] = ImVec4(bg.x + 0.02f, bg.y + 0.02f, bg.z + 0.02f, 1.0f);
     s.Colors[ImGuiCol_Text] = ImVec4(0.47f, 0.47f, 0.47f, 1.0f);
     s.Colors[ImGuiCol_TextDisabled] = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
     s.Colors[ImGuiCol_Border] = ImVec4(bg.x, bg.y, bg.z, 1.0f);
