@@ -297,11 +297,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                     ImGui::SetCursorPos(ImVec2(150.0f * dpi_scale, 20.0f * dpi_scale));
                     ImGui::Text("License Activation");
                     
-                    ImGui::SetCursorPos(ImVec2(50.0f * dpi_scale, 60.0f * dpi_scale));
-                    if (ImGui::Button("Activate Key", ImVec2(300.0f * dpi_scale, 40.0f * dpi_scale)))
-                        login_tab = 0;
-                    
-                    ImGui::SetCursorPos(ImVec2(20.0f * dpi_scale, 120.0f * dpi_scale));
+                    ImGui::SetCursorPos(ImVec2(20.0f * dpi_scale, 60.0f * dpi_scale));
                     ImGui::BeginChild("LoginContent", ImVec2(360.0f * dpi_scale, 400.0f * dpi_scale), false);
                     {
                         ImGui::Text("License Key:");
