@@ -309,16 +309,16 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                     ImGui::InputText("##license_key", login_key, IM_ARRAYSIZE(login_key));
                     ImGui::PopItemWidth();
 
-                    ImGui::SetCursorPos(ImVec2(pad, 170.0f * dpi_scale));
+                    ImGui::SetCursorPos(ImVec2(pad, 270.0f * dpi_scale));
                     ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), "HWID: %s", auth.getHWID().c_str());
 
-                    ImGui::SetCursorPos(ImVec2(pad, 210.0f * dpi_scale));
+                    ImGui::SetCursorPos(ImVec2(pad, 310.0f * dpi_scale));
                     if (strlen(login_error_message) > 0)
                     {
                         ImGui::TextColored(ImVec4(0.9f, 0.3f, 0.3f, 1.0f), "%s", login_error_message);
                     }
 
-                    ImGui::SetCursorPos(ImVec2((cw - 160.0f * dpi_scale) / 2.0f, 270.0f * dpi_scale));
+                    ImGui::SetCursorPos(ImVec2((cw - 160.0f * dpi_scale) / 2.0f, 370.0f * dpi_scale));
                     if (ImGui::Button("Activate", ImVec2(160.0f * dpi_scale, 40.0f * dpi_scale)))
                     {
                         if (strlen(login_key) < 10) {
@@ -336,12 +336,12 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         }
                     }
 
-                    ImGui::SetCursorPos(ImVec2((cw - ImGui::CalcTextSize("Subscription: None").x) / 2.0f, 350.0f * dpi_scale));
+                    ImGui::SetCursorPos(ImVec2((cw - ImGui::CalcTextSize("Subscription: None").x) / 2.0f, 440.0f * dpi_scale));
                     ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "Subscription: %s",
                         auth.isValid() ? auth.getSubscription().c_str() : "None");
                     if (auth.isValid() && auth.getExpiresAt() != "never") {
                         auto exp_text = "Expires: " + auth.getExpiresAt();
-                        ImGui::SetCursorPos(ImVec2((cw - ImGui::CalcTextSize(exp_text.c_str()).x) / 2.0f, 380.0f * dpi_scale));
+                        ImGui::SetCursorPos(ImVec2((cw - ImGui::CalcTextSize(exp_text.c_str()).x) / 2.0f, 470.0f * dpi_scale));
                         ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "Expires: %s",
                             auth.getExpiresAt().c_str());
                     }
