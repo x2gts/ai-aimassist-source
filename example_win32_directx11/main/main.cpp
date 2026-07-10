@@ -470,35 +470,40 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                     ImGui::EndChild();
 
                     ImGui::SetCursorPosY(110.0f * dpi_scale);
-                    ImGui::BeginChildPos("##recoil_tabs", ImVec2(620.0f * dpi_scale, 35.0f * dpi_scale));
                     {
-                        ImGui::SetWindowFontScale(dpi_scale);
                         float tab_w = 310.0f * dpi_scale;
+                        float tab_h = 35.0f * dpi_scale;
+                        ImVec4 activeCol(theme::accent[0], theme::accent[1], theme::accent[2], 1.0f);
+                        ImVec4 inactiveCol(theme::bg[0] * 0.85f, theme::bg[1] * 0.85f, theme::bg[2] * 0.85f, 1.0f);
+                        ImVec4 inactiveHover(theme::bg[0] * 1.05f, theme::bg[1] * 1.05f, theme::bg[2] * 1.05f, 1.0f);
 
                         if (var::recoil_subtab == 0)
                         {
-                            if (ImGui::Button("ATK##tab", ImVec2(tab_w, 35.0f * dpi_scale)))
-                                var::recoil_subtab = 0;
+                            ImGui::PushStyleColor(ImGuiCol_Button, activeCol);
+                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, activeCol);
+                            ImGui::Button("ATK##tab", ImVec2(tab_w, tab_h));
+                            ImGui::PopStyleColor(2);
                             ImGui::SameLine();
-                            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.1f, 0.12f, 1.0f));
-                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.15f, 0.15f, 0.18f, 1.0f));
-                            if (ImGui::Button("DEF##tab", ImVec2(tab_w, 35.0f * dpi_scale)))
+                            ImGui::PushStyleColor(ImGuiCol_Button, inactiveCol);
+                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, inactiveHover);
+                            if (ImGui::Button("DEF##tab", ImVec2(tab_w, tab_h)))
                                 var::recoil_subtab = 1;
                             ImGui::PopStyleColor(2);
                         }
                         else
                         {
-                            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.1f, 0.12f, 1.0f));
-                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.15f, 0.15f, 0.18f, 1.0f));
-                            if (ImGui::Button("ATK##tab", ImVec2(tab_w, 35.0f * dpi_scale)))
+                            ImGui::PushStyleColor(ImGuiCol_Button, inactiveCol);
+                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, inactiveHover);
+                            if (ImGui::Button("ATK##tab", ImVec2(tab_w, tab_h)))
                                 var::recoil_subtab = 0;
                             ImGui::PopStyleColor(2);
                             ImGui::SameLine();
-                            if (ImGui::Button("DEF##tab", ImVec2(tab_w, 35.0f * dpi_scale)))
-                                var::recoil_subtab = 1;
+                            ImGui::PushStyleColor(ImGuiCol_Button, activeCol);
+                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, activeCol);
+                            ImGui::Button("DEF##tab", ImVec2(tab_w, tab_h));
+                            ImGui::PopStyleColor(2);
                         }
                     }
-                    ImGui::EndChild();
 
                     ImGui::SetCursorPosY(155.0f * dpi_scale);
                     ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetColorU32(colors::lite_color));
@@ -512,16 +517,16 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         ImGui::Separator();
                         ImGui::Spacing();
 
-                        float left_w = 300.0f * dpi_scale;
-                        float right_w = 300.0f * dpi_scale;
+                        float left_w = 295.0f * dpi_scale;
+                        float right_w = 315.0f * dpi_scale;
 
-                        ImGui::BeginChild("##op_grid", ImVec2(left_w, 310.0f * dpi_scale), false);
+                        ImGui::BeginChild("##op_grid", ImVec2(left_w, 340.0f * dpi_scale), false);
                         {
                             ImGui::SetWindowFontScale(dpi_scale);
 
                             float btn_size = 64.0f * dpi_scale;
                             float padding = 6.0f * dpi_scale;
-                            float avail_w = left_w - 20.0f * dpi_scale;
+                            float avail_w = left_w - 10.0f * dpi_scale;
                             int cols = (int)((avail_w + padding) / (btn_size + padding));
                             if (cols < 1) cols = 1;
 
@@ -543,12 +548,13 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                                 var::operator_textures_loaded = true;
                             }
 
-                            int col = 0;
-                            for (int i = 0; i < 63; i++)
-                            {
-                                if (is_atk[i] != (var::recoil_subtab == 0))
-                                    continue;
+                            const int* order = var::recoil_subtab == 0 ? atk_order : def_order;
+                            int order_count = var::recoil_subtab == 0 ? atk_order_count : def_order_count;
 
+                            int col = 0;
+                            for (int idx = 0; idx < order_count; idx++)
+                            {
+                                int i = order[idx];
                                 bool selected = (var::selected_operator == i);
 
                                 ImGui::PushID(i);
@@ -602,43 +608,47 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
                         ImGui::SameLine();
 
-                        ImGui::BeginChild("##recoil_cfg", ImVec2(right_w, 310.0f * dpi_scale), false);
+                        ImGui::BeginChild("##recoil_cfg", ImVec2(right_w, 430.0f * dpi_scale), false);
                         {
                             ImGui::SetWindowFontScale(dpi_scale);
 
-                            ImGui::TextColored(ImVec4(0.8f, 0.8f, 0.8f, 1.0f), "%s", recoil_data[var::selected_operator].name);
+                            ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "%s", recoil_data[var::selected_operator].name);
                             ImGui::SameLine();
-                            ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.0f), " - %s", recoil_data[var::selected_operator].weapon);
+                            ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), " - %s", recoil_data[var::selected_operator].weapon);
 
                             ImGui::Spacing();
                             ImGui::Separator();
                             ImGui::Spacing();
 
                             const char* cfg_tabs[] = { "Sights", "Barrel", "Grip" };
-                            float cfg_tab_w = (right_w - 20.0f * dpi_scale) / 3.0f;
+                            float cfg_tab_w = (right_w - 30.0f * dpi_scale) / 3.0f;
                             for (int t = 0; t < 3; t++)
                             {
                                 if (t > 0) ImGui::SameLine();
                                 bool active = (var::recoil_config_tab == t);
                                 if (!active)
                                 {
-                                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.1f, 0.12f, 1.0f));
-                                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.15f, 0.15f, 0.18f, 1.0f));
+                                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(theme::bg[0] * 0.85f, theme::bg[1] * 0.85f, theme::bg[2] * 0.85f, 1.0f));
+                                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(theme::bg[0] * 1.05f, theme::bg[1] * 1.05f, theme::bg[2] * 1.05f, 1.0f));
+                                }
+                                else
+                                {
+                                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(theme::accent[0], theme::accent[1], theme::accent[2], 1.0f));
+                                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(theme::accent[0], theme::accent[1], theme::accent[2], 1.0f));
                                 }
                                 if (ImGui::Button(cfg_tabs[t], ImVec2(cfg_tab_w, 25.0f * dpi_scale)))
                                     var::recoil_config_tab = t;
-                                if (!active)
-                                    ImGui::PopStyleColor(2);
+                                ImGui::PopStyleColor(2);
                             }
 
                             ImGui::Spacing();
                             ImGui::Separator();
                             ImGui::Spacing();
 
-                            ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 0.8f), "Sensitivity");
-                            ImGui::PushItemWidth(right_w - 20.0f * dpi_scale);
-                            ImGui::SliderFloat("##sens_h", &var::sensitivity_h, 1.0f, 100.0f, "Horizontal: %.0f");
-                            ImGui::SliderFloat("##sens_v", &var::sensitivity_v, 1.0f, 100.0f, "Vertical: %.0f");
+                            ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Sensitivity");
+                            ImGui::PushItemWidth(-20.0f);
+                            ImGui::SliderFloat("##sens_h", &var::sensitivity_h, 1.0f, 100.0f, "H: %.0f");
+                            ImGui::SliderFloat("##sens_v", &var::sensitivity_v, 1.0f, 100.0f, "V: %.0f");
                             ImGui::SliderFloat("##ads_sens", &var::ads_sensitivity, 1.0f, 100.0f, "ADS: %.0f");
                             ImGui::PopItemWidth();
 
@@ -648,33 +658,33 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
                             if (var::recoil_config_tab == 0)
                             {
-                                ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 0.8f), "Sight");
-                                ImGui::PushItemWidth(right_w - 20.0f * dpi_scale);
+                                ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Sight");
+                                ImGui::PushItemWidth(-20.0f);
                                 ImGui::Combo("##sight", &var::selected_sight, sight_names, SIGHT_COUNT);
                                 ImGui::PopItemWidth();
                                 ImGui::Spacing();
-                                ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 0.7f), "ADS Mult: %.2fx", sight_ads_mult[var::selected_sight]);
-                                ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 0.7f), "Recoil Mod: %.0f%%", sight_recoil_mod[var::selected_sight] * 100.0f);
+                                ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "ADS Mult: %.2fx", sight_ads_mult[var::selected_sight]);
+                                ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Recoil Mod: %.0f%%", sight_recoil_mod[var::selected_sight] * 100.0f);
                             }
                             else if (var::recoil_config_tab == 1)
                             {
-                                ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 0.8f), "Barrel");
-                                ImGui::PushItemWidth(right_w - 20.0f * dpi_scale);
+                                ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Barrel");
+                                ImGui::PushItemWidth(-20.0f);
                                 ImGui::Combo("##barrel", &var::selected_barrel, barrel_names, BARREL_COUNT);
                                 ImGui::PopItemWidth();
                                 ImGui::Spacing();
-                                ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 0.7f), "Vertical: %.0f%%", barrel_vert_mod[var::selected_barrel] * 100.0f);
-                                ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 0.7f), "Horizontal: %.0f%%", barrel_horz_mod[var::selected_barrel] * 100.0f);
+                                ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Vertical: %.0f%%", barrel_vert_mod[var::selected_barrel] * 100.0f);
+                                ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Horizontal: %.0f%%", barrel_horz_mod[var::selected_barrel] * 100.0f);
                             }
                             else if (var::recoil_config_tab == 2)
                             {
-                                ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 0.8f), "Grip");
-                                ImGui::PushItemWidth(right_w - 20.0f * dpi_scale);
+                                ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Grip");
+                                ImGui::PushItemWidth(-20.0f);
                                 ImGui::Combo("##grip", &var::selected_grip, grip_names, GRIP_COUNT);
                                 ImGui::PopItemWidth();
                                 ImGui::Spacing();
-                                ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 0.7f), "Vertical: %.0f%%", grip_vert_mod[var::selected_grip] * 100.0f);
-                                ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 0.7f), "Horizontal: %.0f%%", grip_horz_mod[var::selected_grip] * 100.0f);
+                                ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Vertical: %.0f%%", grip_vert_mod[var::selected_grip] * 100.0f);
+                                ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Horizontal: %.0f%%", grip_horz_mod[var::selected_grip] * 100.0f);
                             }
                         }
                         ImGui::EndChild();

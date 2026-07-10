@@ -80,6 +80,11 @@ inline RecoilPattern recoil_data[] = {
 };
 inline int recoil_data_count = 63;
 
+inline int atk_order[] = { 46,51,50,3,55,8,25, 26,27,32,17,34,39,23, 61,0,18,41,45,24,7, 20,21,13,6,62,60,43,11 };
+inline int atk_order_count = 29;
+inline int def_order[] = { 38,47,42,9,12,44,5, 28,30,19,56,10,57,31, 14,33,1,37,29,22,58, 59,35,2,53,40,4,16, 54,48,52,36,15,49 };
+inline int def_order_count = 34;
+
 inline void loadRecoilPatterns() {
     char exePath[MAX_PATH] = { 0 };
     GetModuleFileNameA(nullptr, exePath, MAX_PATH);
