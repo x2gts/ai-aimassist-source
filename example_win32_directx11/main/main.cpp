@@ -555,7 +555,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
                             ImDrawList* dl = ImGui::GetWindowDrawList();
 
-                            ImU32 bg_col = selected ? IM_COL32(77, 128, 230, 255) : IM_COL32(38, 38, 46, 255);
+                            ImU32 bg_col = ImGui::GetColorU32(selected ? colors::Op_Selected : colors::Op_Normal);
                             dl->AddRectFilled(btn_pos, ImVec2(btn_pos.x + btn_size, btn_pos.y + btn_size), bg_col, 6.0f);
 
                             if (operator_textures[i])
@@ -579,7 +579,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                             if (selected)
                             {
                                 dl->AddRect(btn_pos, ImVec2(btn_pos.x + btn_size, btn_pos.y + btn_size),
-                                    IM_COL32(100, 150, 255, 255), 6.0f, 0, 2.0f);
+                                    ImGui::GetColorU32(colors::Op_Border), 6.0f, 0, 2.0f);
                             }
 
                             ImGui::PopID();

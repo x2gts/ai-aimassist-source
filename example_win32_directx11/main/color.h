@@ -61,6 +61,10 @@ namespace colors {
 
     inline ImVec4 keybind_background = ImColor(17, 17, 17, 255);
     inline ImVec4 keybind_border = ImColor(28, 28, 28, 255);
+
+    inline ImVec4 Op_Selected = ImColor(77, 128, 230, 255);
+    inline ImVec4 Op_Normal = ImColor(38, 38, 46, 255);
+    inline ImVec4 Op_Border = ImColor(100, 150, 255, 255);
 }
 
 namespace theme {
@@ -70,12 +74,14 @@ namespace theme {
 
     inline void updateColors()
     {
-        float bgDim = 0.8f;
-        float bgLight = 1.2f;
+        float bgDim = 0.6f;
+        float bgMid = 0.8f;
+        float bgLight = 1.1f;
+        float bgLighter = 1.3f;
 
         colors::Car_Slider = ImColor(accent[0], accent[1], accent[2], 1.0f);
-        colors::Car_Slider_Hovered = ImColor(accent[0] * 1.05f, accent[1] * 1.05f, accent[2] * 1.05f, 1.0f);
-        colors::Car_Slider_Active = ImColor(accent[0] * 1.05f, accent[1] * 1.05f, accent[2] * 1.05f, 1.0f);
+        colors::Car_Slider_Hovered = ImColor(accent[0] * 1.1f, accent[1] * 1.1f, accent[2] * 1.1f, 1.0f);
+        colors::Car_Slider_Active = ImColor(accent[0] * 1.1f, accent[1] * 1.1f, accent[2] * 1.1f, 1.0f);
 
         colors::Checkbox_Active = ImColor(accent[0], accent[1], accent[2], 1.0f);
 
@@ -89,5 +95,19 @@ namespace theme {
         colors::InputText = ImColor(bg[0], bg[1], bg[2], 1.0f);
         colors::Button = ImColor(bg[0] * bgLight, bg[1] * bgLight, bg[2] * bgLight, 1.0f);
         colors::Tab_Child = ImColor(bg[0] * bgDim, bg[1] * bgDim, bg[2] * bgDim, 1.0f);
+        colors::Tab_Border = ImColor(bg[0] * bgMid, bg[1] * bgMid, bg[2] * bgMid, 1.0f);
+        colors::Tab_Hovered = ImColor(bg[0] * bgLighter, bg[1] * bgLighter, bg[2] * bgLighter, 1.0f);
+        colors::Tab = ImColor(bg[0] * bgMid, bg[1] * bgMid, bg[2] * bgMid, 1.0f);
+        colors::Combo = ImColor(bg[0] * bgMid, bg[1] * bgMid, bg[2] * bgMid, 1.0f);
+        colors::Button_Hovered = ImColor(bg[0] * bgLighter, bg[1] * bgLighter, bg[2] * bgLighter, 1.0f);
+        colors::Button_Active = ImColor(bg[0] * bgLighter, bg[1] * bgLighter, bg[2] * bgLighter, 1.0f);
+        colors::Checkbox = ImColor(bg[0] * bgMid, bg[1] * bgMid, bg[2] * bgMid, 1.0f);
+        colors::Checkbox_Hovered = ImColor(bg[0] * bgMid, bg[1] * bgMid, bg[2] * bgMid, 1.0f);
+        colors::keybind_background = ImColor(bg[0] * bgMid, bg[1] * bgMid, bg[2] * bgMid, 1.0f);
+        colors::keybind_border = ImColor(bg[0] * bgLight, bg[1] * bgLight, bg[2] * bgLight, 1.0f);
+
+        colors::Op_Normal = ImColor(bg[0] * bgMid, bg[1] * bgMid, bg[2] * bgMid, 1.0f);
+        colors::Op_Selected = ImColor(highlight[0], highlight[1], highlight[2], 1.0f);
+        colors::Op_Border = ImColor(highlight[0] * 0.8f, highlight[1] * 0.8f, highlight[2] * 0.8f, 1.0f);
     }
 }
