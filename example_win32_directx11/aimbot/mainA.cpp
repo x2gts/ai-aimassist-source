@@ -67,8 +67,19 @@ void aimbot::recoil_control()
     if (var::selected_operator >= 0 && var::selected_operator < recoil_data_count)
     {
         const RecoilPattern& pattern = recoil_data[var::selected_operator];
-        float target_y = pattern.vertical * 20.0f;
-        float target_x = pattern.horizontal * 10.0f;
+
+        float sens_h = var::sensitivity_h > 0.0f ? var::sensitivity_h : BASE_SENSITIVITY;
+        float sens_v = var::sensitivity_v > 0.0f ? var::sensitivity_v : BASE_SENSITIVITY;
+        float ads_mult = sight_ads_mult[var::selected_sight];
+
+        float vert_scale = (BASE_SENSITIVITY / sens_v) * ads_mult;
+        float horz_scale = (BASE_SENSITIVITY / sens_h) * ads_mult;
+
+        float vert_mod = barrel_vert_mod[var::selected_barrel] * grip_vert_mod[var::selected_grip] * sight_recoil_mod[var::selected_sight];
+        float horz_mod = barrel_horz_mod[var::selected_barrel] * grip_horz_mod[var::selected_grip] * sight_recoil_mod[var::selected_sight];
+
+        float target_y = pattern.vertical * 20.0f * vert_scale * vert_mod;
+        float target_x = pattern.horizontal * 10.0f * horz_scale * horz_mod;
 
         static float recoil_x_smooth = 0.0f;
         static float recoil_y_smooth = 0.0f;

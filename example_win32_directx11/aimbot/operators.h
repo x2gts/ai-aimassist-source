@@ -258,6 +258,23 @@ inline bool is_atk[] = {
     true,  // zofia
 };
 
+inline const float BASE_SENSITIVITY = 25.0f;
+
+enum Sights { SIGHT_NONE, SIGHT_HOLO, SIGHT_REFLEX, SIGHT_ACOG_1X, SIGHT_ACOG_2X, SIGHT_ACOG_2_5X, SIGHT_COUNT };
+inline const char* sight_names[] = { "None", "Holographic", "Reflex", "ACOG 1.0x", "ACOG 2.0x", "ACOG 2.5x" };
+inline float sight_ads_mult[] = { 0.50f, 0.55f, 0.55f, 0.70f, 0.95f, 1.20f };
+inline float sight_recoil_mod[] = { 1.0f, 0.95f, 0.95f, 0.85f, 0.80f, 0.75f };
+
+enum Barrels { BARREL_NONE, BARREL_MUZZLE_BRAKE, BARREL_FLASH_HIDER, BARREL_COMPENSATOR, BARREL_EXTENDED, BARREL_SUPPRESSOR, BARREL_COUNT };
+inline const char* barrel_names[] = { "None", "Muzzle Brake", "Flash Hider", "Compensator", "Extended Barrel", "Suppressor" };
+inline float barrel_vert_mod[] = { 1.0f, 0.65f, 0.75f, 0.90f, 1.1f, 1.0f };
+inline float barrel_horz_mod[] = { 1.0f, 1.0f, 0.70f, 0.60f, 1.1f, 1.0f };
+
+enum Grips { GRIP_NONE, GRIP_ANGLED, GRIP_VERTICAL, GRIP_HORIZONTAL, GRIP_COUNT };
+inline const char* grip_names[] = { "None", "Angled Grip", "Vertical Grip", "Horizontal Grip" };
+inline float grip_vert_mod[] = { 1.0f, 1.05f, 0.75f, 0.90f };
+inline float grip_horz_mod[] = { 1.0f, 1.0f, 0.90f, 0.70f };
+
 inline OperatorIcon operator_icons[] = {
     {icon_ace, icon_ace_size},
     {icon_alibi, icon_alibi_size},

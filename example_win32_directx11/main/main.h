@@ -86,7 +86,14 @@ namespace var {
     inline bool recoil_control = false;
     inline int selected_operator = 0;
     inline int recoil_subtab = 0; // 0=ATK, 1=DEF
+    inline int recoil_config_tab = 0; // 0=operator, 1=sights, 2=barrel, 3=grip
     inline bool operator_textures_loaded = false;
+    inline float sensitivity_h = 25.0f;
+    inline float sensitivity_v = 25.0f;
+    inline float ads_sensitivity = 50.0f;
+    inline int selected_sight = 0;
+    inline int selected_barrel = 0;
+    inline int selected_grip = 0;
     inline int key0 = 0;
     inline int key4 = VK_INSERT;
     inline bool animated_background = false;

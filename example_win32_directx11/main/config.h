@@ -35,6 +35,12 @@ inline void saveConfig()
     j["recoil"]["enabled"] = var::recoil_control;
     j["recoil"]["selected_operator"] = var::selected_operator;
     j["recoil"]["subtab"] = var::recoil_subtab;
+    j["recoil"]["sensitivity_h"] = var::sensitivity_h;
+    j["recoil"]["sensitivity_v"] = var::sensitivity_v;
+    j["recoil"]["ads_sensitivity"] = var::ads_sensitivity;
+    j["recoil"]["selected_sight"] = var::selected_sight;
+    j["recoil"]["selected_barrel"] = var::selected_barrel;
+    j["recoil"]["selected_grip"] = var::selected_grip;
 
     j["misc"]["hide_menu_key"] = var::key4;
     j["misc"]["animated_background"] = var::animated_background;
@@ -81,6 +87,12 @@ inline void loadConfig()
             if (r.contains("enabled")) var::recoil_control = r["enabled"];
             if (r.contains("selected_operator")) var::selected_operator = r["selected_operator"];
             if (r.contains("subtab")) var::recoil_subtab = r["subtab"];
+            if (r.contains("sensitivity_h")) var::sensitivity_h = r["sensitivity_h"];
+            if (r.contains("sensitivity_v")) var::sensitivity_v = r["sensitivity_v"];
+            if (r.contains("ads_sensitivity")) var::ads_sensitivity = r["ads_sensitivity"];
+            if (r.contains("selected_sight")) var::selected_sight = r["selected_sight"];
+            if (r.contains("selected_barrel")) var::selected_barrel = r["selected_barrel"];
+            if (r.contains("selected_grip")) var::selected_grip = r["selected_grip"];
         }
 
         if (j.contains("misc"))
