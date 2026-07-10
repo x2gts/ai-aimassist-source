@@ -260,10 +260,10 @@ inline bool is_atk[] = {
 
 inline const float BASE_SENSITIVITY = 25.0f;
 
-enum Sights { SIGHT_NONE, SIGHT_1X, SIGHT_MAGNIFIED, SIGHT_TELESCOPIC, SIGHT_COUNT };
-inline const char* sight_names[] = { "None", "1x", "Magnified 2.5x", "Telescopic 3.5x" };
-inline float sight_ads_mult[] = { 0.50f, 0.55f, 0.85f, 1.10f };
-inline float sight_recoil_mod[] = { 1.0f, 0.95f, 0.80f, 0.70f };
+enum Sights { SIGHT_NONE, SIGHT_MAGNIFIED, SIGHT_TELESCOPIC, SIGHT_COUNT };
+inline const char* sight_names[] = { "1x", "Magnified 2.5x", "Telescopic 3.5x" };
+inline float sight_ads_mult[] = { 0.50f, 0.85f, 1.10f };
+inline float sight_recoil_mod[] = { 1.0f, 0.80f, 0.70f };
 
 enum Barrels { BARREL_NONE, BARREL_MUZZLE_BRAKE, BARREL_FLASH_HIDER, BARREL_COMPENSATOR, BARREL_EXTENDED, BARREL_SUPPRESSOR, BARREL_COUNT };
 inline const char* barrel_names[] = { "None", "Muzzle Brake", "Flash Hider", "Compensator", "Extended Barrel", "Suppressor" };
