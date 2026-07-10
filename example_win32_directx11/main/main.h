@@ -90,7 +90,12 @@ namespace var {
     inline bool operator_textures_loaded = false;
     inline float sensitivity_h = 25.0f;
     inline float sensitivity_v = 25.0f;
-    inline float ads_sensitivity = 50.0f;
+    inline float ads_standard = 50.0f;
+    inline float ads_1x = 55.0f;
+    inline float ads_2_5x = 60.0f;
+    inline float ads_3_5x = 82.0f;
+    inline float ads_5x = 73.0f;
+    inline float ads_12x = 62.0f;
     inline int selected_sight = 0;
     inline int selected_barrel = 0;
     inline int selected_grip = 0;

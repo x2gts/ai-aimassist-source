@@ -507,7 +507,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
                     ImGui::SetCursorPosY(155.0f * dpi_scale);
                     ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetColorU32(colors::lite_color));
-                    ImGui::BeginChild("recoil_ops", ImVec2(620.0f * dpi_scale, 460.0f * dpi_scale), false, ImGuiWindowFlags_AlwaysVerticalScrollbar);
+                    ImGui::BeginChild("recoil_ops", ImVec2(620.0f * dpi_scale, 530.0f * dpi_scale), false, ImGuiWindowFlags_AlwaysVerticalScrollbar);
                     {
                         ImGui::SetWindowFontScale(dpi_scale);
 
@@ -614,7 +614,6 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                             ImVec2 label_size = ImGui::CalcTextSize(label);
                             ImVec2 val_size = ImGui::CalcTextSize(val_buf);
                             float slider_w = 580.0f * dpi_scale;
-                            float cursor_x = ImGui::GetCursorScreenPos().x;
                             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (slider_w - label_size.x) / 2.0f);
                             ImGui::TextColored(ImVec4(0.8f, 0.8f, 0.8f, 1.0f), "%s", label);
                             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (slider_w - val_size.x) / 2.0f - (label_size.x - val_size.x) / 2.0f);
@@ -627,8 +626,20 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         drawLabeledSlider("Horizontal", "##sens_h", &var::sensitivity_h, 1.0f, 100.0f);
                         ImGui::Spacing();
                         drawLabeledSlider("Vertical", "##sens_v", &var::sensitivity_v, 1.0f, 100.0f);
+
                         ImGui::Spacing();
-                        drawLabeledSlider("ADS", "##ads_sens", &var::ads_sensitivity, 1.0f, 100.0f);
+                        ImGui::Separator();
+                        ImGui::Spacing();
+
+                        ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "ADS Sensitivity (per scope)");
+
+                        const char* ads_labels[] = { "Standard", "1.0x", "2.5x", "3.5x", "5.0x", "12.0x" };
+                        float* ads_values[] = { &var::ads_standard, &var::ads_1x, &var::ads_2_5x, &var::ads_3_5x, &var::ads_5x, &var::ads_12x };
+                        for (int a = 0; a < 6; a++)
+                        {
+                            drawLabeledSlider(ads_labels[a], ("##ads_" + std::to_string(a)).c_str(), ads_values[a], 1.0f, 100.0f);
+                            if (a < 5) ImGui::Spacing();
+                        }
 
                         ImGui::Spacing();
                         ImGui::Separator();

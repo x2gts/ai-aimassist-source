@@ -70,7 +70,10 @@ void aimbot::recoil_control()
 
         float sens_h = var::sensitivity_h > 0.0f ? var::sensitivity_h : BASE_SENSITIVITY;
         float sens_v = var::sensitivity_v > 0.0f ? var::sensitivity_v : BASE_SENSITIVITY;
-        float ads_mult = sight_ads_mult[var::selected_sight];
+
+        float ads_per_scope[] = { var::ads_standard, var::ads_1x, var::ads_2_5x, var::ads_3_5x, var::ads_5x, var::ads_12x };
+        float ads_val = ads_per_scope[var::selected_sight < SIGHT_COUNT ? var::selected_sight : 0];
+        float ads_mult = ads_val / 50.0f;
 
         float vert_scale = (BASE_SENSITIVITY / sens_v) * ads_mult;
         float horz_scale = (BASE_SENSITIVITY / sens_h) * ads_mult;

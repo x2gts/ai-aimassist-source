@@ -37,7 +37,12 @@ inline void saveConfig()
     j["recoil"]["subtab"] = var::recoil_subtab;
     j["recoil"]["sensitivity_h"] = var::sensitivity_h;
     j["recoil"]["sensitivity_v"] = var::sensitivity_v;
-    j["recoil"]["ads_sensitivity"] = var::ads_sensitivity;
+    j["recoil"]["ads_standard"] = var::ads_standard;
+    j["recoil"]["ads_1x"] = var::ads_1x;
+    j["recoil"]["ads_2_5x"] = var::ads_2_5x;
+    j["recoil"]["ads_3_5x"] = var::ads_3_5x;
+    j["recoil"]["ads_5x"] = var::ads_5x;
+    j["recoil"]["ads_12x"] = var::ads_12x;
     j["recoil"]["selected_sight"] = var::selected_sight;
     j["recoil"]["selected_barrel"] = var::selected_barrel;
     j["recoil"]["selected_grip"] = var::selected_grip;
@@ -89,7 +94,12 @@ inline void loadConfig()
             if (r.contains("subtab")) var::recoil_subtab = r["subtab"];
             if (r.contains("sensitivity_h")) var::sensitivity_h = r["sensitivity_h"];
             if (r.contains("sensitivity_v")) var::sensitivity_v = r["sensitivity_v"];
-            if (r.contains("ads_sensitivity")) var::ads_sensitivity = r["ads_sensitivity"];
+            if (r.contains("ads_standard")) var::ads_standard = r["ads_standard"];
+            if (r.contains("ads_1x")) var::ads_1x = r["ads_1x"];
+            if (r.contains("ads_2_5x")) var::ads_2_5x = r["ads_2_5x"];
+            if (r.contains("ads_3_5x")) var::ads_3_5x = r["ads_3_5x"];
+            if (r.contains("ads_5x")) var::ads_5x = r["ads_5x"];
+            if (r.contains("ads_12x")) var::ads_12x = r["ads_12x"];
             if (r.contains("selected_sight")) var::selected_sight = r["selected_sight"];
             if (r.contains("selected_barrel")) var::selected_barrel = r["selected_barrel"];
             if (r.contains("selected_grip")) var::selected_grip = r["selected_grip"];
