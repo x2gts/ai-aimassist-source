@@ -74,10 +74,10 @@ namespace theme {
 
     inline void updateColors()
     {
-        float bgDim = 0.85f;
-        float bgMid = 0.92f;
-        float bgLight = 1.05f;
-        float bgLighter = 1.12f;
+        float bgAdd1 = 0.03f;
+        float bgAdd2 = 0.06f;
+        float bgAdd3 = 0.10f;
+        float bgAdd4 = 0.14f;
 
         colors::Car_Slider = ImColor(accent[0], accent[1], accent[2], 1.0f);
         colors::Car_Slider_Hovered = ImColor(accent[0] * 1.1f, accent[1] * 1.1f, accent[2] * 1.1f, 1.0f);
@@ -88,25 +88,25 @@ namespace theme {
         colors::Tab_Selected = ImColor(highlight[0], highlight[1], highlight[2], 1.0f);
 
         colors::main_color = ImColor(bg[0], bg[1], bg[2], 1.0f);
-        colors::lite_color = ImColor(bg[0] * bgLight, bg[1] * bgLight, bg[2] * bgLight, 1.0f);
-        colors::Slider = ImColor(bg[0] * bgMid, bg[1] * bgMid, bg[2] * bgMid, 1.0f);
-        colors::Slider_Hovered = ImColor(bg[0] * bgLight, bg[1] * bgLight, bg[2] * bgLight, 1.0f);
-        colors::Slider_Active = ImColor(bg[0] * bgLight, bg[1] * bgLight, bg[2] * bgLight, 1.0f);
-        colors::InputText = ImColor(bg[0] * bgMid, bg[1] * bgMid, bg[2] * bgMid, 1.0f);
-        colors::Button = ImColor(bg[0] * bgLight, bg[1] * bgLight, bg[2] * bgLight, 1.0f);
-        colors::Tab_Child = ImColor(bg[0] * bgDim, bg[1] * bgDim, bg[2] * bgDim, 1.0f);
-        colors::Tab_Border = ImColor(bg[0] * bgMid, bg[1] * bgMid, bg[2] * bgMid, 1.0f);
-        colors::Tab_Hovered = ImColor(bg[0] * bgLighter, bg[1] * bgLighter, bg[2] * bgLighter, 1.0f);
-        colors::Tab = ImColor(bg[0] * bgMid, bg[1] * bgMid, bg[2] * bgMid, 1.0f);
-        colors::Combo = ImColor(bg[0] * bgMid, bg[1] * bgMid, bg[2] * bgMid, 1.0f);
-        colors::Button_Hovered = ImColor(bg[0] * bgLighter, bg[1] * bgLighter, bg[2] * bgLighter, 1.0f);
-        colors::Button_Active = ImColor(bg[0] * bgLighter, bg[1] * bgLighter, bg[2] * bgLighter, 1.0f);
-        colors::Checkbox = ImColor(bg[0] * bgMid, bg[1] * bgMid, bg[2] * bgMid, 1.0f);
-        colors::Checkbox_Hovered = ImColor(bg[0] * bgMid, bg[1] * bgMid, bg[2] * bgMid, 1.0f);
-        colors::keybind_background = ImColor(bg[0] * bgMid, bg[1] * bgMid, bg[2] * bgMid, 1.0f);
-        colors::keybind_border = ImColor(bg[0] * bgLight, bg[1] * bgLight, bg[2] * bgLight, 1.0f);
+        colors::lite_color = ImColor(bg[0] + bgAdd1, bg[1] + bgAdd1, bg[2] + bgAdd1, 1.0f);
+        colors::Slider = ImColor(bg[0] + bgAdd2, bg[1] + bgAdd2, bg[2] + bgAdd2, 1.0f);
+        colors::Slider_Hovered = ImColor(bg[0] + bgAdd3, bg[1] + bgAdd3, bg[2] + bgAdd3, 1.0f);
+        colors::Slider_Active = ImColor(bg[0] + bgAdd3, bg[1] + bgAdd3, bg[2] + bgAdd3, 1.0f);
+        colors::InputText = ImColor(bg[0] + bgAdd2, bg[1] + bgAdd2, bg[2] + bgAdd2, 1.0f);
+        colors::Button = ImColor(bg[0] + bgAdd3, bg[1] + bgAdd3, bg[2] + bgAdd3, 1.0f);
+        colors::Tab_Child = ImColor(bg[0] + bgAdd1, bg[1] + bgAdd1, bg[2] + bgAdd1, 1.0f);
+        colors::Tab_Border = ImColor(bg[0] + bgAdd2, bg[1] + bgAdd2, bg[2] + bgAdd2, 1.0f);
+        colors::Tab_Hovered = ImColor(bg[0] + bgAdd4, bg[1] + bgAdd4, bg[2] + bgAdd4, 1.0f);
+        colors::Tab = ImColor(bg[0] + bgAdd2, bg[1] + bgAdd2, bg[2] + bgAdd2, 1.0f);
+        colors::Combo = ImColor(bg[0] + bgAdd2, bg[1] + bgAdd2, bg[2] + bgAdd2, 1.0f);
+        colors::Button_Hovered = ImColor(bg[0] + bgAdd4, bg[1] + bgAdd4, bg[2] + bgAdd4, 1.0f);
+        colors::Button_Active = ImColor(bg[0] + bgAdd4, bg[1] + bgAdd4, bg[2] + bgAdd4, 1.0f);
+        colors::Checkbox = ImColor(bg[0] + bgAdd2, bg[1] + bgAdd2, bg[2] + bgAdd2, 1.0f);
+        colors::Checkbox_Hovered = ImColor(bg[0] + bgAdd2, bg[1] + bgAdd2, bg[2] + bgAdd2, 1.0f);
+        colors::keybind_background = ImColor(bg[0] + bgAdd2, bg[1] + bgAdd2, bg[2] + bgAdd2, 1.0f);
+        colors::keybind_border = ImColor(bg[0] + bgAdd3, bg[1] + bgAdd3, bg[2] + bgAdd3, 1.0f);
 
-        colors::Op_Normal = ImColor(bg[0] * bgMid, bg[1] * bgMid, bg[2] * bgMid, 1.0f);
+        colors::Op_Normal = ImColor(bg[0] + bgAdd2, bg[1] + bgAdd2, bg[2] + bgAdd2, 1.0f);
         colors::Op_Selected = ImColor(highlight[0], highlight[1], highlight[2], 1.0f);
         colors::Op_Border = ImColor(highlight[0] * 0.8f, highlight[1] * 0.8f, highlight[2] * 0.8f, 1.0f);
     }
