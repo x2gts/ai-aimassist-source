@@ -607,11 +607,28 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
                         ImGui::Spacing();
 
                         ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.9f, 1.0f), "Sensitivity");
-                        ImGui::PushItemWidth(580.0f * dpi_scale);
-                        ImGui::SliderFloat("##sens_h", &var::sensitivity_h, 1.0f, 100.0f, "%.0f");
-                        ImGui::SliderFloat("##sens_v", &var::sensitivity_v, 1.0f, 100.0f, "%.0f");
-                        ImGui::SliderFloat("##ads_sens", &var::ads_sensitivity, 1.0f, 100.0f, "%.0f");
-                        ImGui::PopItemWidth();
+
+                        auto drawLabeledSlider = [&](const char* label, const char* id, float* value, float min, float max) {
+                            char val_buf[32];
+                            snprintf(val_buf, sizeof(val_buf), "%.0f", *value);
+                            ImVec2 label_size = ImGui::CalcTextSize(label);
+                            ImVec2 val_size = ImGui::CalcTextSize(val_buf);
+                            float slider_w = 580.0f * dpi_scale;
+                            float cursor_x = ImGui::GetCursorScreenPos().x;
+                            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (slider_w - label_size.x) / 2.0f);
+                            ImGui::TextColored(ImVec4(0.8f, 0.8f, 0.8f, 1.0f), "%s", label);
+                            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (slider_w - val_size.x) / 2.0f - (label_size.x - val_size.x) / 2.0f);
+                            ImGui::TextColored(ImVec4(theme::accent[0], theme::accent[1], theme::accent[2], 1.0f), "%s", val_buf);
+                            ImGui::PushItemWidth(slider_w);
+                            ImGui::SliderFloat(id, value, min, max, "");
+                            ImGui::PopItemWidth();
+                        };
+
+                        drawLabeledSlider("Horizontal", "##sens_h", &var::sensitivity_h, 1.0f, 100.0f);
+                        ImGui::Spacing();
+                        drawLabeledSlider("Vertical", "##sens_v", &var::sensitivity_v, 1.0f, 100.0f);
+                        ImGui::Spacing();
+                        drawLabeledSlider("ADS", "##ads_sens", &var::ads_sensitivity, 1.0f, 100.0f);
 
                         ImGui::Spacing();
                         ImGui::Separator();
